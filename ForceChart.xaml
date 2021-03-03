@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="SpasticityClient.ForceChart"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:chart="clr-namespace:SpasticityClient"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="330" d:DesignWidth="300">
+    <Grid Margin="5">
+        <lvc:CartesianChart DisableAnimations="True" DataTooltip="{x:Null}" Height="auto" Width="auto">
+            <lvc:CartesianChart.Series>
+                <lvc:LineSeries Values="{Binding ForceValues}" PointGeometry="{x:Null}" LineSmoothness="0"></lvc:LineSeries>
+            </lvc:CartesianChart.Series>
+        </lvc:CartesianChart>
+    </Grid>
+</UserControl>
