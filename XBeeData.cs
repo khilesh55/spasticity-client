@@ -47,12 +47,13 @@ namespace SpasticityClient
                 var packetRemainData = new List<string>();
 
                 float lastElapsedTime = 0;
-
+                var ind = 0;
                 //int index = 0;
 
                 //infinite loop will keep running and adding to EMGInfo until IsCancelled is set to true
                 while (IsCancelled == false)
                 {
+                    
                     //Check if any bytes of data received in serial buffer
                     var totalbytes = serialPort.BytesToRead;
 
@@ -110,93 +111,93 @@ namespace SpasticityClient
                                     var data = packetData;
                                     //convert string to byte for later MSB and LSB combination - 16 bit to 8 bit
                                     //convert timestamp
-                                    var TIME2MSB = Convert.ToByte(data[0], 16);
-                                    var TIME2LSB = Convert.ToByte(data[1], 16);
-                                    var TIME1MSB = Convert.ToByte(data[2], 16);
-                                    var TIME1LSB = Convert.ToByte(data[3], 16);
+                                    var TIME2MSB = Convert.ToByte(data[8], 16);
+                                    var TIME2LSB = Convert.ToByte(data[9], 16);
+                                    var TIME1MSB = Convert.ToByte(data[10], 16);
+                                    var TIME1LSB = Convert.ToByte(data[11], 16);
 
                                     //convert IMU angular velocity in x, y, z --- A
-                                    var AGVLx2MSB_A = Convert.ToByte(data[4], 16);
-                                    var AGVLx2LSB_A = Convert.ToByte(data[5], 16);
-                                    var AGVLx1MSB_A = Convert.ToByte(data[6], 16);
-                                    var AGVLx1LSB_A = Convert.ToByte(data[7], 16);
+                                    var AGVLx2MSB_A = Convert.ToByte(data[12], 16);
+                                    var AGVLx2LSB_A = Convert.ToByte(data[13], 16);
+                                    var AGVLx1MSB_A = Convert.ToByte(data[14], 16);
+                                    var AGVLx1LSB_A = Convert.ToByte(data[15], 16);
 
-                                    var AGVLy2MSB_A = Convert.ToByte(data[8], 16);
-                                    var AGVLy2LSB_A = Convert.ToByte(data[9], 16);
-                                    var AGVLy1MSB_A = Convert.ToByte(data[10], 16);
-                                    var AGVLy1LSB_A = Convert.ToByte(data[11], 16);
+                                    var AGVLy2MSB_A = Convert.ToByte(data[16], 16);
+                                    var AGVLy2LSB_A = Convert.ToByte(data[17], 16);
+                                    var AGVLy1MSB_A = Convert.ToByte(data[18], 16);
+                                    var AGVLy1LSB_A = Convert.ToByte(data[19], 16);
 
-                                    var AGVLz2MSB_A = Convert.ToByte(data[12], 16);
-                                    var AGVLz2LSB_A = Convert.ToByte(data[13], 16);
-                                    var AGVLz1MSB_A = Convert.ToByte(data[14], 16);
-                                    var AGVLz1LSB_A = Convert.ToByte(data[15], 16);
+                                    var AGVLz2MSB_A = Convert.ToByte(data[20], 16);
+                                    var AGVLz2LSB_A = Convert.ToByte(data[21], 16);
+                                    var AGVLz1MSB_A = Convert.ToByte(data[22], 16);
+                                    var AGVLz1LSB_A = Convert.ToByte(data[23], 16);
 
                                     //convert IMU orientation in x, y, z --- A
-                                    var ORIEx2MSB_A = Convert.ToByte(data[16], 16);
-                                    var ORIEx2LSB_A = Convert.ToByte(data[17], 16);
-                                    var ORIEx1MSB_A = Convert.ToByte(data[18], 16);
-                                    var ORIEx1LSB_A = Convert.ToByte(data[19], 16);
+                                    var ORIEx2MSB_A = Convert.ToByte(data[24], 16);
+                                    var ORIEx2LSB_A = Convert.ToByte(data[25], 16);
+                                    var ORIEx1MSB_A = Convert.ToByte(data[26], 16);
+                                    var ORIEx1LSB_A = Convert.ToByte(data[27], 16);
 
-                                    var ORIEy2MSB_A = Convert.ToByte(data[20], 16);
-                                    var ORIEy2LSB_A = Convert.ToByte(data[21], 16);
-                                    var ORIEy1MSB_A = Convert.ToByte(data[22], 16);
-                                    var ORIEy1LSB_A = Convert.ToByte(data[23], 16);
+                                    var ORIEy2MSB_A = Convert.ToByte(data[28], 16);
+                                    var ORIEy2LSB_A = Convert.ToByte(data[29], 16);
+                                    var ORIEy1MSB_A = Convert.ToByte(data[30], 16);
+                                    var ORIEy1LSB_A = Convert.ToByte(data[31], 16);
 
-                                    var ORIEz2MSB_A = Convert.ToByte(data[24], 16);
-                                    var ORIEz2LSB_A = Convert.ToByte(data[25], 16);
-                                    var ORIEz1MSB_A = Convert.ToByte(data[26], 16);
-                                    var ORIEz1LSB_A = Convert.ToByte(data[27], 16);
+                                    var ORIEz2MSB_A = Convert.ToByte(data[32], 16);
+                                    var ORIEz2LSB_A = Convert.ToByte(data[33], 16);
+                                    var ORIEz1MSB_A = Convert.ToByte(data[34], 16);
+                                    var ORIEz1LSB_A = Convert.ToByte(data[35], 16);
 
                                     //convert IMU angular velocity in x, y, z --- B
-                                    var AGVLx2MSB_B = Convert.ToByte(data[28], 16);
-                                    var AGVLx2LSB_B = Convert.ToByte(data[29], 16);
-                                    var AGVLx1MSB_B = Convert.ToByte(data[30], 16);
-                                    var AGVLx1LSB_B = Convert.ToByte(data[31], 16);
+                                    var AGVLx2MSB_B = Convert.ToByte(data[36], 16);
+                                    var AGVLx2LSB_B = Convert.ToByte(data[37], 16);
+                                    var AGVLx1MSB_B = Convert.ToByte(data[38], 16);
+                                    var AGVLx1LSB_B = Convert.ToByte(data[39], 16);
 
-                                    var AGVLy2MSB_B = Convert.ToByte(data[32], 16);
-                                    var AGVLy2LSB_B = Convert.ToByte(data[33], 16);
-                                    var AGVLy1MSB_B = Convert.ToByte(data[34], 16);
-                                    var AGVLy1LSB_B = Convert.ToByte(data[35], 16);
+                                    var AGVLy2MSB_B = Convert.ToByte(data[40], 16);
+                                    var AGVLy2LSB_B = Convert.ToByte(data[41], 16);
+                                    var AGVLy1MSB_B = Convert.ToByte(data[42], 16);
+                                    var AGVLy1LSB_B = Convert.ToByte(data[43], 16);
 
-                                    var AGVLz2MSB_B = Convert.ToByte(data[36], 16);
-                                    var AGVLz2LSB_B = Convert.ToByte(data[37], 16);
-                                    var AGVLz1MSB_B = Convert.ToByte(data[38], 16);
-                                    var AGVLz1LSB_B = Convert.ToByte(data[39], 16);
+                                    var AGVLz2MSB_B = Convert.ToByte(data[44], 16);
+                                    var AGVLz2LSB_B = Convert.ToByte(data[45], 16);
+                                    var AGVLz1MSB_B = Convert.ToByte(data[46], 16);
+                                    var AGVLz1LSB_B = Convert.ToByte(data[47], 16);
 
                                     //convert IMU orientation in x, y, z --- B
-                                    var ORIEx2MSB_B = Convert.ToByte(data[40], 16);
-                                    var ORIEx2LSB_B = Convert.ToByte(data[41], 16);
-                                    var ORIEx1MSB_B = Convert.ToByte(data[42], 16);
-                                    var ORIEx1LSB_B = Convert.ToByte(data[43], 16);
+                                    var ORIEx2MSB_B = Convert.ToByte(data[48], 16);
+                                    var ORIEx2LSB_B = Convert.ToByte(data[49], 16);
+                                    var ORIEx1MSB_B = Convert.ToByte(data[50], 16);
+                                    var ORIEx1LSB_B = Convert.ToByte(data[51], 16);
 
-                                    var ORIEy2MSB_B = Convert.ToByte(data[44], 16);
-                                    var ORIEy2LSB_B = Convert.ToByte(data[45], 16);
-                                    var ORIEy1MSB_B = Convert.ToByte(data[46], 16);
-                                    var ORIEy1LSB_B = Convert.ToByte(data[47], 16);
+                                    var ORIEy2MSB_B = Convert.ToByte(data[52], 16);
+                                    var ORIEy2LSB_B = Convert.ToByte(data[53], 16);
+                                    var ORIEy1MSB_B = Convert.ToByte(data[54], 16);
+                                    var ORIEy1LSB_B = Convert.ToByte(data[55], 16);
 
-                                    var ORIEz2MSB_B = Convert.ToByte(data[48], 16);
-                                    var ORIEz2LSB_B = Convert.ToByte(data[49], 16);
-                                    var ORIEz1MSB_B = Convert.ToByte(data[50], 16);
-                                    var ORIEz1LSB_B = Convert.ToByte(data[51], 16);
+                                    var ORIEz2MSB_B = Convert.ToByte(data[56], 16);
+                                    var ORIEz2LSB_B = Convert.ToByte(data[57], 16);
+                                    var ORIEz1MSB_B = Convert.ToByte(data[58], 16);
+                                    var ORIEz1LSB_B = Convert.ToByte(data[59], 16);
 
                                     //convert rectified EMG
-                                    var EMGMSB = Convert.ToByte(data[52], 16);
-                                    var EMGLSB = Convert.ToByte(data[53], 16);
+                                    var EMGMSB = Convert.ToByte(data[60], 16);
+                                    var EMGLSB = Convert.ToByte(data[61], 16);
 
                                     //convert force
-                                    var FORMSB = Convert.ToByte(data[54], 16);
-                                    var FORLSB = Convert.ToByte(data[55], 16);
+                                    var FORMSB = Convert.ToByte(data[62], 16);
+                                    var FORLSB = Convert.ToByte(data[63], 16);
 
                                     //MSB LSB combination.
                                     float elapsedTime = (long)((TIME2MSB & 0xFF) << 24 | (TIME2LSB & 0xFF) << 16 | (TIME1MSB & 0xFF) << 8 | (TIME1LSB & 0xFF));
 
-                                    float angVelX = (long)((AGVLx2MSB_A & 0xFF) << 24 | (AGVLx2LSB_A & 0xFF) << 16 | (AGVLx1MSB_A & 0xFF) << 8 | (AGVLx1LSB_A & 0xFF));
-                                    float angVelY = (long)((AGVLy2MSB_A & 0xFF) << 24 | (AGVLy2LSB_A & 0xFF) << 16 | (AGVLy1MSB_A & 0xFF) << 8 | (AGVLy1LSB_A & 0xFF));
-                                    float angVelZ = (long)((AGVLz2MSB_A & 0xFF) << 24 | (AGVLz2LSB_A & 0xFF) << 16 | (AGVLz1MSB_A & 0xFF) << 8 | (AGVLz1LSB_A & 0xFF));
+                                    float angVelX = (long)((AGVLx2MSB_B & 0xFF) << 24 | (AGVLx2LSB_B & 0xFF) << 16 | (AGVLx1MSB_B & 0xFF) << 8 | (AGVLx1LSB_B & 0xFF));
+                                    float angVelY = (long)((AGVLy2MSB_B & 0xFF) << 24 | (AGVLy2LSB_B & 0xFF) << 16 | (AGVLy1MSB_B & 0xFF) << 8 | (AGVLy1LSB_B & 0xFF));
+                                    float angVelZ = (long)((AGVLz2MSB_B & 0xFF) << 24 | (AGVLz2LSB_B & 0xFF) << 16 | (AGVLz1MSB_B & 0xFF) << 8 | (AGVLz1LSB_B & 0xFF));
 
-                                    float orientX = (long)((ORIEx2MSB_A & 0xFF) << 24 | (ORIEx2LSB_A & 0xFF) << 16 | (ORIEx1MSB_A & 0xFF) << 8 | (ORIEx1LSB_A & 0xFF));
-                                    float orientY = (long)((ORIEy2MSB_A & 0xFF) << 24 | (ORIEy2LSB_A & 0xFF) << 16 | (ORIEy1MSB_A & 0xFF) << 8 | (ORIEy1LSB_A & 0xFF));
-                                    float orientZ = (long)((ORIEz2MSB_A & 0xFF) << 24 | (ORIEz2LSB_A & 0xFF) << 16 | (ORIEz1MSB_A & 0xFF) << 8 | (ORIEz1LSB_A & 0xFF));
+                                    float orientX = (long)((ORIEx2MSB_B & 0xFF) << 24 | (ORIEx2LSB_B & 0xFF) << 16 | (ORIEx1MSB_B & 0xFF) << 8 | (ORIEx1LSB_B & 0xFF));
+                                    float orientY = (long)((ORIEy2MSB_B & 0xFF) << 24 | (ORIEy2LSB_B & 0xFF) << 16 | (ORIEy1MSB_B & 0xFF) << 8 | (ORIEy1LSB_B & 0xFF));
+                                    float orientZ = (long)((ORIEz2MSB_B & 0xFF) << 24 | (ORIEz2LSB_B & 0xFF) << 16 | (ORIEz1MSB_B & 0xFF) << 8 | (ORIEz1LSB_B & 0xFF));
 
                                     float emg = (int)((EMGMSB & 0xFF) << 8 | (EMGLSB & 0xFF));
                                     float force = (int)((FORMSB & 0xFF) << 8 | (FORLSB & 0xFF));
@@ -217,57 +218,42 @@ namespace SpasticityClient
                                     var timediff = elapsedTime - lastElapsedTime;
                                     lastElapsedTime = elapsedTime;
 
-                                    //The Gravity and divider are from Arduino code.
-                                    //var GRAVITY = 9.80665F;
-                                    //float divider = 2048;
-
                                     //The following are the data we have for excel file 
                                     var td = Math.Round(timediff / 1000, 2);
                                     var tdStr = Convert.ToString(td);
                                     var t = elapsedTime;
+                                    
+                                    if (chartModel.EMGValues.Count < keepRecords)
+                                    {
+                                        chartModel.Min = 0;
+                                    }
+                                    else
+                                    {
+                                        chartModel.Min = ind;
+                                        chartModel.EMGValues.RemoveAt(0);
+                                        
 
-                                    chartModel.EMGValues.Add(orientZ);
-                                    //chartModel.AngleValues.Add(orientX);
-                                    //chartModel.AngularVelocityValues.Add(angVelX);
-                                    //chartModel.ChartValues[3].Values.Add(force);
+                                        //chartModel.AngleValues.RemoveAt(0);
+                                        //chartModel.AngularVelocityValues.RemoveAt(0);
+                                        //chartModel.ForceValues.RemoveAt(0);
+                                    }
+                                        chartModel.EMGValues.Add(orientX);
+                                        ind += 1;
+                                        //chartModel.AngleValues.Add(orientX);
+                                        //chartModel.AngularVelocityValues.Add(angVelX);
+                                        //chartModel.ChartValues[3].Values.Add(force);
 
-                                    chartModel.Min = chartModel.EMGValues.Count - keepRecords;
-
-                                    //Work this part into the Excel business
-                                    //chartModel.csvData.Enqueue(td + "," + elapsedTime / 1000000 + "," + acc_ax + "," + acc_ay + "," + acc_az + "," + acc_bx + "," + acc_by + "," + acc_bz);
-
-                                    //if (lastVelocity == 0)
-                                    //{
-                                    //TODO: Set lasts to current if first
-
-                                    /*last_acc_ax = acc_ax;
-                                    last_acc_bx = acc_bx;
-                                    last_t = t;
-                                    lastVelocity = Math.Sqrt(Math.Abs(acc_bx - acc_ax) / sensor_distance);*/
-                                    //}
-                                    // there was an else
-
-
-                                    //TODO: write from here to OC EMGInfo
-                                    //redlinerchartModel.Values.Add(force);
-
-                                    //FA.EMGInfo.Add(sortedPacket);
-                                    if (chartModel.EMGValues.Count > keepRecords)
-                                        {
-                                            //for (int i = 0; i < 4; i++)
-                                            {
-                                                chartModel.EMGValues.RemoveAt(0);
-                                                //chartModel.AngleValues.RemoveAt(0);
-                                                //chartModel.AngularVelocityValues.RemoveAt(0);
-                                                //chartModel.ForceValues.RemoveAt(0);
-                                            }
-                                        }  
+                                    
                                     
                                 }
                             }
                         }
                     }
+
+                    
                 }
+
+               
             }
             finally
             {

@@ -42,11 +42,9 @@ namespace SpasticityClient
             get { return _portName; }
             set
             {
-
                     _portName = value;
                     EMGChartModel = new ChartModel(_portName);
                     NotifyPropertyChanged("PortName");
-
             }
         }
 
