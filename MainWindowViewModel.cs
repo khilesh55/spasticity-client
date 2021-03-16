@@ -50,6 +50,7 @@ namespace SpasticityClient
 
         public MainWindowViewModel()
         {
+
             PortNames = XBeeFunctions.GetPortNamesByBaudrate(19200);
 
             if (PortNames.Count >= 1)

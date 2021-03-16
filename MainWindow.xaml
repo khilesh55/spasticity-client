@@ -22,7 +22,7 @@
         </DataTemplate>
     </Window.Resources>
     
-    <Grid ShowGridLines="True">
+    <Grid ShowGridLines="False">
         
         <Grid.RowDefinitions>
             <RowDefinition Height="0.2*"></RowDefinition>

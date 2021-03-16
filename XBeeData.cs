@@ -46,10 +46,6 @@ namespace SpasticityClient
                 var remainHex = string.Empty;
                 var packetRemainData = new List<string>();
 
-                float lastElapsedTime = 0;
-                var ind = 0;
-                //int index = 0;
-
                 //infinite loop will keep running and adding to EMGInfo until IsCancelled is set to true
                 while (IsCancelled == false)
                 {
@@ -202,43 +198,28 @@ namespace SpasticityClient
                                     float emg = (int)((EMGMSB & 0xFF) << 8 | (EMGLSB & 0xFF));
                                     float force = (int)((FORMSB & 0xFF) << 8 | (FORLSB & 0xFF));
 
-                                    //redlinerchartModel.BatteryLevel = battery;
-                                    //index++;
-                                    //if (index > 400)
-                                    //    redlinerchartModel.BatteryLevel = 3.44f;
-                                    //if (index > 600)
-                                    //    redlinerchartModel.BatteryLevel = 3.01f;
-
-                                    if (lastElapsedTime == 0)
-                                    {
-                                        lastElapsedTime = elapsedTime;
-                                        break;
-                                    }
-
-                                    var timediff = elapsedTime - lastElapsedTime;
-                                    lastElapsedTime = elapsedTime;
-
-                                    //The following are the data we have for excel file 
-                                    var td = Math.Round(timediff / 1000, 2);
-                                    var tdStr = Convert.ToString(td);
-                                    var t = elapsedTime;
                                     
-                                    if (chartModel.EMGValues.Count < keepRecords)
+                                    if (chartModel.EMGValues.Count > keepRecords)
                                     {
-                                        chartModel.Min = 0;
-                                    }
-                                    else
-                                    {
-                                        chartModel.Min = ind;
                                         chartModel.EMGValues.RemoveAt(0);
-                                        
-
                                         //chartModel.AngleValues.RemoveAt(0);
                                         //chartModel.AngularVelocityValues.RemoveAt(0);
                                         //chartModel.ForceValues.RemoveAt(0);
                                     }
-                                        chartModel.EMGValues.Add(orientX);
-                                        ind += 1;
+
+                                    var now = DateTime.Now;
+                                    chartModel.SetAxisLimits(now);
+                                    chartModel.EMGValues.Add(new MeasureModel
+                                    {
+                                        DateTime = now,
+                                        Value = orientX
+                                    });
+
+                                    Thread.Sleep(30);
+
+
+                                    
+                                        
                                         //chartModel.AngleValues.Add(orientX);
                                         //chartModel.AngularVelocityValues.Add(angVelX);
                                         //chartModel.ChartValues[3].Values.Add(force);

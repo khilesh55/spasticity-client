@@ -11,10 +11,34 @@ using System.Linq;
 
 namespace SpasticityClient
 {
+    public class MeasureModel : INotifyPropertyChanged
+    {
+        public DateTime DateTime { get; set; }
+        private double _value { get; set; }
+        public double Value
+        {
+            get { return _value; }
+            set
+            {
+                _value = value;
+                OnPropertyChanged("Value");
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName = null)
+        {
+            //Raise PropertyChanged event
+            if (PropertyChanged != null)
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
     public class ChartModel : INotifyPropertyChanged, IDisposable
     {
         #region variables
         private double _min;
+        private double _max;
+        private double _value;
         private double _count;
         private XBeeData _xbeeData;
         private string _buttonLabel;
@@ -24,9 +48,14 @@ namespace SpasticityClient
 
         #region properties
         public Queue<string> csvData { get; set; }
-        public ChartValues<double> EMGValues { get; set; }
         public RelayCommand ReadCommand { get; set; }
         public bool IsRunning { get; set; }
+
+        public ChartValues<MeasureModel> EMGValues { get; set; }
+        public Func<double, string> DateTimeFormatter { get; set; }
+        public double AxisStep { get; set; }
+        public double AxisUnit { get; set; }
+
         public double Min
         {
             get { return _min; }
@@ -34,6 +63,24 @@ namespace SpasticityClient
             {
                 _min = value;
                 OnPropertyChanged("Min");
+            }
+        }
+        public double Max
+        {
+            get { return _max; }
+            set
+            {
+                _max = value;
+                OnPropertyChanged("Max");
+            }
+        }
+        public double Value
+        {
+            get { return _value; }
+            set
+            {
+                _value = value;
+                OnPropertyChanged("Value");
             }
         }
         public double Count
@@ -85,8 +132,8 @@ namespace SpasticityClient
                 NotifyPropertyChanged("BatteryColor");
             }
         }
-        public string PortName { get; set; }
 
+        public string PortName { get; set; }
         #endregion
 
         #region event
@@ -104,11 +151,33 @@ namespace SpasticityClient
             IsRunning = false;
             BatteryLevel = 0;
 
-            EMGValues = new ChartValues<double>();
+            //EMGValues = new ChartValues<double>();
+
+            var mapper = LiveCharts.Configurations.Mappers.Xy<MeasureModel>()
+                .X(model => model.DateTime.Ticks)   //use DateTime.Ticks as X
+                .Y(model => model.Value);           //use the value property as Y
+
+            //lets save the mapper globally.
+            Charting.For<MeasureModel>(mapper);
+
+            //the values property will store our values array
+            EMGValues = new ChartValues<MeasureModel>();
+
+            //lets set how to display the X Labels
+            DateTimeFormatter = value => new DateTime((long)value).ToString("mm:ss");
+
+            //AxisStep forces the distance between each separator in the X axis
+            AxisStep = TimeSpan.FromSeconds(1).Ticks;
+            //AxisUnit forces lets the axis know that we are plotting seconds
+            //this is not always necessary, but it can prevent wrong labeling
+            AxisUnit = TimeSpan.TicksPerSecond;
+
+            SetAxisLimits(DateTime.Now);
         }
         #endregion
 
         #region method
+
         public void Read()
         {
             try
@@ -118,23 +187,13 @@ namespace SpasticityClient
                 if (!IsRunning)
                 {
                     _xbeeData.IsCancelled = false;
-                    const int keepRecords = 20;
+                    const int keepRecords = 80;
                     var mainApp = (MainWindow)App.Current.MainWindow;
 
                     Action readFromXBee = () =>
                     {
                         try
                         {
-#if DEBUG
-                            //while (!_xbeeData.IsCancelled)
-                            //{
-                            //    Random random = new Random();
-                            //    double force = random.NextDouble() * 6 - 3;
-                            //    this.Values.Add(force);
-                            //    this.Min = this.Values.Count - keepRecords;
-                            //    if (this.Values.Count > keepRecords) this.Values.RemoveAt(0);
-                            //}
-#endif
                             _xbeeData.Read(keepRecords, this);
                         }
                         catch (Exception ex)
@@ -162,6 +221,12 @@ namespace SpasticityClient
             {
                 //MessageBox.Show(ex.Message);
             }
+        }
+
+        public void SetAxisLimits(DateTime now)
+        {
+            Max = now.Ticks + TimeSpan.FromSeconds(0.3).Ticks; // lets force the axis to be 1 second ahead
+            Min = now.Ticks - TimeSpan.FromSeconds(1.5).Ticks; // and 8 seconds behind
         }
         #endregion
 
