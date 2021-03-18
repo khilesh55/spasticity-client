@@ -9,10 +9,11 @@
              d:DesignHeight="330" d:DesignWidth="300">
     <Grid Margin="5">
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
             <RowDefinition Height="0.1*"></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <lvc:CartesianChart Grid.Row="0" AnimationsSpeed="0:0:0.5" DataTooltip="{x:Null}" Height="auto" Width="auto" Hoverable="False">
+        <TextBlock Grid.Row="0" Text="EMG" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+        <lvc:CartesianChart Grid.Row="1" AnimationsSpeed="0:0:0.5" DataTooltip="{x:Null}" Height="auto" Width="auto" Hoverable="False">
             <lvc:CartesianChart.Series>
                 <lvc:LineSeries Values="{Binding EMGValues}" 
                                 PointGeometry="{x:Null}" 
@@ -32,6 +33,6 @@
                 </lvc:Axis>
             </lvc:CartesianChart.AxisX>
         </lvc:CartesianChart>
-        <Button Name="ButtonLabel" Grid.Row="1" Width="120" HorizontalAlignment="Right" Command="{Binding ReadCommand}" Content="Read" />
+        <!--<Button Name="ButtonLabel" Grid.Row="1" Width="120" HorizontalAlignment="Right" Command="{Binding ReadCommand}" Content="Read" />-->
     </Grid>
 </UserControl>

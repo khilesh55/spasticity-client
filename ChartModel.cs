@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using LiveCharts.Wpf;
 using System.Windows;
 using System.Linq;
+using Prism.Commands;
 
 namespace SpasticityClient
 {
@@ -48,10 +49,15 @@ namespace SpasticityClient
 
         #region properties
         public Queue<string> csvData { get; set; }
-        public RelayCommand ReadCommand { get; set; }
+        //public RelayCommand ReadCommand { get; set; }
+        public DelegateCommand ReadCommand { get; private set; }
         public bool IsRunning { get; set; }
 
         public ChartValues<MeasureModel> EMGValues { get; set; }
+        public ChartValues<MeasureModel> ForceValues { get; set; }
+        public ChartValues<MeasureModel> AngleValues { get; set; }
+        public ChartValues<MeasureModel> AngularVelocityValues { get; set; }
+
         public Func<double, string> DateTimeFormatter { get; set; }
         public double AxisStep { get; set; }
         public double AxisUnit { get; set; }
@@ -145,7 +151,9 @@ namespace SpasticityClient
         {
             PortName = portname;
             _xbeeData = new XBeeData(portname);
-            ReadCommand = new RelayCommand(Read);
+            //ReadCommand = new RelayCommand(Read);
+            ReadCommand = new DelegateCommand(Read);
+            ApplicationCommands.ReadCommand.RegisterCommand(ReadCommand);
             csvData = new Queue<string>();
             ButtonLabel = "Start Reading";
             IsRunning = false;
@@ -162,6 +170,9 @@ namespace SpasticityClient
 
             //the values property will store our values array
             EMGValues = new ChartValues<MeasureModel>();
+            ForceValues = new ChartValues<MeasureModel>();
+            AngleValues = new ChartValues<MeasureModel>();
+            AngularVelocityValues = new ChartValues<MeasureModel>();
 
             //lets set how to display the X Labels
             DateTimeFormatter = value => new DateTime((long)value).ToString("mm:ss");

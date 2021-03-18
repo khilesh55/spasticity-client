@@ -1,8 +1,14 @@
-﻿using System;
+﻿using Prism.Commands;
+using System;
 using System.Windows.Input;
 
 namespace SpasticityClient
 {
+    public static class ApplicationCommands
+    {
+        public static CompositeCommand ReadCommand = new CompositeCommand();
+    }
+
     public class RelayCommand : ICommand
     {
         private Action _action;

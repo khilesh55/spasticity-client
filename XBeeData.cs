@@ -49,11 +49,10 @@ namespace SpasticityClient
                 //infinite loop will keep running and adding to EMGInfo until IsCancelled is set to true
                 while (IsCancelled == false)
                 {
-                    
                     //Check if any bytes of data received in serial buffer
                     var totalbytes = serialPort.BytesToRead;
 
-                    Thread.Sleep(1);
+                    Thread.Sleep(30);
 
                     if (totalbytes > 0)
                     {
@@ -202,45 +201,46 @@ namespace SpasticityClient
                                     if (chartModel.EMGValues.Count > keepRecords)
                                     {
                                         chartModel.EMGValues.RemoveAt(0);
-                                        //chartModel.AngleValues.RemoveAt(0);
-                                        //chartModel.AngularVelocityValues.RemoveAt(0);
-                                        //chartModel.ForceValues.RemoveAt(0);
+                                        chartModel.AngleValues.RemoveAt(0);
+                                        chartModel.AngularVelocityValues.RemoveAt(0);
+                                        chartModel.ForceValues.RemoveAt(0);
                                     }
 
                                     var now = DateTime.Now;
                                     chartModel.SetAxisLimits(now);
+
                                     chartModel.EMGValues.Add(new MeasureModel
+                                    {
+                                        DateTime = now,
+                                        Value = emg
+                                    });
+                                    chartModel.ForceValues.Add(new MeasureModel
+                                    {
+                                        DateTime = now,
+                                        Value = force
+                                    });
+                                    chartModel.AngleValues.Add(new MeasureModel
                                     {
                                         DateTime = now,
                                         Value = orientX
                                     });
+                                    chartModel.AngularVelocityValues.Add(new MeasureModel
+                                    {
+                                        DateTime = now,
+                                        Value = angVelX
+                                    });
 
                                     Thread.Sleep(30);
-
-
-                                    
-                                        
-                                        //chartModel.AngleValues.Add(orientX);
-                                        //chartModel.AngularVelocityValues.Add(angVelX);
-                                        //chartModel.ChartValues[3].Values.Add(force);
-
-                                    
-                                    
                                 }
                             }
                         }
                     }
-
-                    
                 }
-
-               
             }
             finally
             {
                 Stop();
             }
-
         }
 
         public void Stop()

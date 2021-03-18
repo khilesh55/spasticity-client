@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prism.Commands;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,9 +14,13 @@ namespace SpasticityClient
     {
         private int _numDataExported;
         private ChartModel _emgChartModel;
+        private ChartModel _forceChartModel;
+        private ChartModel _angleChartModel;
+        private ChartModel _angularVelocityChartModel;
         private string _portName;
 
         public List<string> PortNames { get; internal set; }
+        //public DelegateCommand UpdateCommand { get; private set; }
 
         public ChartModel EMGChartModel
         {
@@ -24,6 +29,36 @@ namespace SpasticityClient
             {
                 _emgChartModel = value;
                 NotifyPropertyChanged("EMGChartModel");
+            }
+        }
+
+        public ChartModel ForceChartModel
+        {
+            get { return _forceChartModel; }
+            set
+            {
+                _forceChartModel = value;
+                NotifyPropertyChanged("ForceChartModel");
+            }
+        }
+
+        public ChartModel AngleChartModel
+        {
+            get { return _angleChartModel; }
+            set
+            {
+                _angleChartModel = value;
+                NotifyPropertyChanged("AngleChartModel");
+            }
+        }
+
+        public ChartModel AngularVelocityChartModel
+        {
+            get { return _angularVelocityChartModel; }
+            set
+            {
+                _angularVelocityChartModel = value;
+                NotifyPropertyChanged("AngularVelocityChartModel");
             }
         }
 
@@ -42,16 +77,19 @@ namespace SpasticityClient
             get { return _portName; }
             set
             {
-                    _portName = value;
-                    EMGChartModel = new ChartModel(_portName);
-                    NotifyPropertyChanged("PortName");
+                _portName = value;
+                EMGChartModel = new ChartModel(_portName);
+                ForceChartModel = new ChartModel(_portName);
+                AngleChartModel = new ChartModel(_portName);
+                AngularVelocityChartModel = new ChartModel(_portName);
+                NotifyPropertyChanged("PortName");
             }
         }
 
         public MainWindowViewModel()
         {
-
-            PortNames = XBeeFunctions.GetPortNamesByBaudrate(19200);
+            //19200
+            PortNames = XBeeFunctions.GetPortNamesByBaudrate(57600);
 
             if (PortNames.Count >= 1)
             {

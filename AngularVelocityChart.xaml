@@ -8,10 +8,30 @@
              mc:Ignorable="d" 
              d:DesignHeight="330" d:DesignWidth="300">
     <Grid Margin="5">
-        <lvc:CartesianChart DisableAnimations="True" DataTooltip="{x:Null}" Height="auto" Width="auto">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.1*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Angular Velocity" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+        <lvc:CartesianChart Grid.Row="1" AnimationsSpeed="0:0:0.5" DataTooltip="{x:Null}" Height="auto" Width="auto" Hoverable="False">
             <lvc:CartesianChart.Series>
-                <lvc:LineSeries Values="{Binding AngularVelocityValues}" PointGeometry="{x:Null}" LineSmoothness="0"></lvc:LineSeries>
+                <lvc:LineSeries Values="{Binding AngularVelocityValues}" 
+                                PointGeometry="{x:Null}" 
+                                LineSmoothness="0"
+                                StrokeThickness="4"
+                                Stroke="LimeGreen"></lvc:LineSeries>
             </lvc:CartesianChart.Series>
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis MinValue="0" 
+                          MaxValue="360"></lvc:Axis>
+            </lvc:CartesianChart.AxisY>
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis MinValue="{Binding Min}" 
+                          MaxValue="{Binding Max}" 
+                          Unit="{Binding AxisUnit}"
+                          LabelFormatter="{Binding DateTimeFormatter}">
+                </lvc:Axis>
+            </lvc:CartesianChart.AxisX>
         </lvc:CartesianChart>
     </Grid>
 </UserControl>
