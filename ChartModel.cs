@@ -39,17 +39,10 @@ namespace SpasticityClient
         #region variables
         private double _min;
         private double _max;
-        private double _value;
-        private double _count;
         private XBeeData _xbeeData;
-        private string _buttonLabel;
-        private string _channelName;
-        private float _batteryLevel;
         #endregion
 
         #region properties
-        public Queue<string> csvData { get; set; }
-        //public RelayCommand ReadCommand { get; set; }
         public DelegateCommand ReadCommand { get; private set; }
         public bool IsRunning { get; set; }
 
@@ -80,64 +73,6 @@ namespace SpasticityClient
                 OnPropertyChanged("Max");
             }
         }
-        public double Value
-        {
-            get { return _value; }
-            set
-            {
-                _value = value;
-                OnPropertyChanged("Value");
-            }
-        }
-        public double Count
-        {
-            get { return _count; }
-            set
-            {
-                _count = value;
-                OnPropertyChanged("Count");
-            }
-        }
-        public string ChannelName
-        {
-            get { return _channelName; }
-            set
-            {
-                _channelName = value;
-                NotifyPropertyChanged("ChannelName");
-            }
-        }
-        public string ButtonLabel
-        {
-            get { return _buttonLabel; }
-            set
-            {
-                _buttonLabel = value;
-                NotifyPropertyChanged("ButtonLabel");
-            }
-        }
-        public string BatteryColor
-        {
-            get
-            {
-                if (_batteryLevel > 3.5)
-                    return "Green";
-                if (_batteryLevel > 3.3 && _batteryLevel <= 3.5)
-                    return "Yellow";
-                else
-                    return "Red";
-            }
-        }
-        public float BatteryLevel
-        {
-            get { return _batteryLevel; }
-            set
-            {
-                _batteryLevel = value;
-                NotifyPropertyChanged("BatteryLevel");
-                NotifyPropertyChanged("BatteryColor");
-            }
-        }
 
         public string PortName { get; set; }
         #endregion
@@ -154,12 +89,7 @@ namespace SpasticityClient
             //ReadCommand = new RelayCommand(Read);
             ReadCommand = new DelegateCommand(Read);
             ApplicationCommands.ReadCommand.RegisterCommand(ReadCommand);
-            csvData = new Queue<string>();
-            ButtonLabel = "Start Reading";
             IsRunning = false;
-            BatteryLevel = 0;
-
-            //EMGValues = new ChartValues<double>();
 
             var mapper = LiveCharts.Configurations.Mappers.Xy<MeasureModel>()
                 .X(model => model.DateTime.Ticks)   //use DateTime.Ticks as X
@@ -179,6 +109,7 @@ namespace SpasticityClient
 
             //AxisStep forces the distance between each separator in the X axis
             AxisStep = TimeSpan.FromSeconds(1).Ticks;
+
             //AxisUnit forces lets the axis know that we are plotting seconds
             //this is not always necessary, but it can prevent wrong labeling
             AxisUnit = TimeSpan.TicksPerSecond;
@@ -219,7 +150,6 @@ namespace SpasticityClient
                     };
 
                     Task.Factory.StartNew(readFromXBee);
-                    ButtonLabel = "Stop Reading";
                     _xbeeData.IsCancelled = false;
                     IsRunning = true;
                 }
@@ -260,9 +190,10 @@ namespace SpasticityClient
         {
             _xbeeData.IsCancelled = true;
             EMGValues.Clear();
+            ForceValues.Clear();
+            AngleValues.Clear();
+            AngularVelocityValues.Clear();
             _xbeeData.Stop();
-            ButtonLabel = "Start Reading";
-            BatteryLevel = 0;
             IsRunning = false;
         }
         #endregion

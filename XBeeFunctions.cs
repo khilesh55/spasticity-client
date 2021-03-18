@@ -145,6 +145,7 @@ namespace SpasticityClient
                 return "";
         }
 
+        // Get names of usable ports
         public static List<string> GetPortNamesByBaudrate(int baudRate)
         {
             List<string> portNames = new List<string>();

@@ -12,63 +12,19 @@ namespace SpasticityClient
 {
     class MainWindowViewModel: INotifyPropertyChanged
     {
-        private int _numDataExported;
-        private ChartModel _emgChartModel;
-        private ChartModel _forceChartModel;
-        private ChartModel _angleChartModel;
-        private ChartModel _angularVelocityChartModel;
+        private ChartModel _chartModel;
         private string _portName;
 
         public List<string> PortNames { get; internal set; }
         //public DelegateCommand UpdateCommand { get; private set; }
 
-        public ChartModel EMGChartModel
+        public ChartModel ChartModel
         {
-            get { return _emgChartModel; }
+            get { return _chartModel; }
             set
             {
-                _emgChartModel = value;
-                NotifyPropertyChanged("EMGChartModel");
-            }
-        }
-
-        public ChartModel ForceChartModel
-        {
-            get { return _forceChartModel; }
-            set
-            {
-                _forceChartModel = value;
-                NotifyPropertyChanged("ForceChartModel");
-            }
-        }
-
-        public ChartModel AngleChartModel
-        {
-            get { return _angleChartModel; }
-            set
-            {
-                _angleChartModel = value;
-                NotifyPropertyChanged("AngleChartModel");
-            }
-        }
-
-        public ChartModel AngularVelocityChartModel
-        {
-            get { return _angularVelocityChartModel; }
-            set
-            {
-                _angularVelocityChartModel = value;
-                NotifyPropertyChanged("AngularVelocityChartModel");
-            }
-        }
-
-        public int NumDataExported
-        {
-            get { return _numDataExported; }
-            set
-            {
-                _numDataExported = value;
-                NotifyPropertyChanged("NumDataExported");
+                _chartModel = value;
+                NotifyPropertyChanged("ChartModel");
             }
         }
 
@@ -78,17 +34,13 @@ namespace SpasticityClient
             set
             {
                 _portName = value;
-                EMGChartModel = new ChartModel(_portName);
-                ForceChartModel = new ChartModel(_portName);
-                AngleChartModel = new ChartModel(_portName);
-                AngularVelocityChartModel = new ChartModel(_portName);
+                ChartModel = new ChartModel(_portName);
                 NotifyPropertyChanged("PortName");
             }
         }
 
         public MainWindowViewModel()
         {
-            //19200
             PortNames = XBeeFunctions.GetPortNamesByBaudrate(57600);
 
             if (PortNames.Count >= 1)

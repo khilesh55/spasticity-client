@@ -37,7 +37,7 @@ namespace SpasticityClient
             Stop();
         }
 
-        // Open serial port, collect some variables
+        // Read from serial port
         public void Read(int keepRecords, ChartModel chartModel)
         {
             try
@@ -69,21 +69,11 @@ namespace SpasticityClient
 
                         var packets = new List<XBeePacket>();
 
-                        // remainHex is all that is left when legitimate packets have been added to packets
+                        //remainHex is all that is left when legitimate packets have been added to packets
                         remainHex = XBeeFunctions.ParsePacketHex(hexFull.Split('-').ToList(), packets);
 
                         foreach (var packet in packets)
                         {
-                            var source = string.Empty;
-
-                            //if (XBeeFunctions.Source16Addresses.ContainsKey(packet.Address16bit))
-                            //    source = XBeeFunctions.Source16Addresses[packet.Address16bit] + ":" + packet.Address16bit;
-
-                            //else
-                            //    source = "Invalid Source Address:" + packet.Address16bit;
-
-                            //recievedData.ChannelName = source;
-
                             //Total transmitted data is 30 byte long. 1 more byte should be checksum. prefixchar is the extra header due to API Mode
                             int prefixCharLength = 8;
                             int byteArrayLength = 69;
@@ -91,7 +81,6 @@ namespace SpasticityClient
                             int totalExpectedCharLength = prefixCharLength + byteArrayLength + checkSumLength;
 
                             //Based on above variables to parse data coming from SerialPort. Next fun is performed sequentially to all packets
-                            //Looks like this casts contents of packetdatas into numbers
                             var packetDatas = XBeeFunctions.ParseRFDataHex(packet.Data, packetRemainData, totalExpectedCharLength);
 
                             foreach (var packetData in packetDatas)
@@ -100,17 +89,16 @@ namespace SpasticityClient
                                 //Also modify data defn to be packetData itself
                                 if (packetData.Count == byteArrayLength)
                                 {
-                                    //Ignore the prefix data and check sum. We only need the actual 30 bytes data send over.
-                                    //var data = packetData.GetRange(prefixCharLength, byteArrayLength);
-
                                     var data = packetData;
-                                    //convert string to byte for later MSB and LSB combination - 16 bit to 8 bit
+
+                                    #region Convert string to byte for later MSB and LSB combination- 16 bit to 18 bit
                                     //convert timestamp
                                     var TIME2MSB = Convert.ToByte(data[8], 16);
                                     var TIME2LSB = Convert.ToByte(data[9], 16);
                                     var TIME1MSB = Convert.ToByte(data[10], 16);
                                     var TIME1LSB = Convert.ToByte(data[11], 16);
 
+                                    #region IMU A Velocity and Orientation
                                     //convert IMU angular velocity in x, y, z --- A
                                     var AGVLx2MSB_A = Convert.ToByte(data[12], 16);
                                     var AGVLx2LSB_A = Convert.ToByte(data[13], 16);
@@ -142,7 +130,9 @@ namespace SpasticityClient
                                     var ORIEz2LSB_A = Convert.ToByte(data[33], 16);
                                     var ORIEz1MSB_A = Convert.ToByte(data[34], 16);
                                     var ORIEz1LSB_A = Convert.ToByte(data[35], 16);
+                                    #endregion
 
+                                    #region IMU B Velocity and Orientation
                                     //convert IMU angular velocity in x, y, z --- B
                                     var AGVLx2MSB_B = Convert.ToByte(data[36], 16);
                                     var AGVLx2LSB_B = Convert.ToByte(data[37], 16);
@@ -174,6 +164,7 @@ namespace SpasticityClient
                                     var ORIEz2LSB_B = Convert.ToByte(data[57], 16);
                                     var ORIEz1MSB_B = Convert.ToByte(data[58], 16);
                                     var ORIEz1LSB_B = Convert.ToByte(data[59], 16);
+                                    #endregion
 
                                     //convert rectified EMG
                                     var EMGMSB = Convert.ToByte(data[60], 16);
@@ -182,8 +173,9 @@ namespace SpasticityClient
                                     //convert force
                                     var FORMSB = Convert.ToByte(data[62], 16);
                                     var FORLSB = Convert.ToByte(data[63], 16);
+                                    #endregion
 
-                                    //MSB LSB combination.
+                                    #region MSB LSB combination
                                     float elapsedTime = (long)((TIME2MSB & 0xFF) << 24 | (TIME2LSB & 0xFF) << 16 | (TIME1MSB & 0xFF) << 8 | (TIME1LSB & 0xFF));
 
                                     float angVelX = (long)((AGVLx2MSB_B & 0xFF) << 24 | (AGVLx2LSB_B & 0xFF) << 16 | (AGVLx1MSB_B & 0xFF) << 8 | (AGVLx1LSB_B & 0xFF));
@@ -196,8 +188,9 @@ namespace SpasticityClient
 
                                     float emg = (int)((EMGMSB & 0xFF) << 8 | (EMGLSB & 0xFF));
                                     float force = (int)((FORMSB & 0xFF) << 8 | (FORLSB & 0xFF));
+                                    #endregion
 
-                                    
+                                    #region Send data to chart model
                                     if (chartModel.EMGValues.Count > keepRecords)
                                     {
                                         chartModel.EMGValues.RemoveAt(0);
@@ -229,6 +222,7 @@ namespace SpasticityClient
                                         DateTime = now,
                                         Value = angVelX
                                     });
+                                    #endregion
 
                                     Thread.Sleep(30);
                                 }
@@ -243,6 +237,7 @@ namespace SpasticityClient
             }
         }
 
+        // Stop reading
         public void Stop()
         {
             if (serialPort != null)

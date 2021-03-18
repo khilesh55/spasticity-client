@@ -33,6 +33,5 @@
                 </lvc:Axis>
             </lvc:CartesianChart.AxisX>
         </lvc:CartesianChart>
-        <!--<Button Name="ButtonLabel" Grid.Row="1" Width="120" HorizontalAlignment="Right" Command="{Binding ReadCommand}" Content="Read" />-->
     </Grid>
 </UserControl>

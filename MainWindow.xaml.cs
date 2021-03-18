@@ -22,14 +22,11 @@ namespace SpasticityClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainWindowViewModel mainWindowViewModel;
         public MainWindow()
         {
             InitializeComponent();
             mainWindowViewModel = (MainWindowViewModel)this.DataContext;
         }
-
-        private ChartModel emgChartModel;
-        private MainWindowViewModel mainWindowViewModel;
-
     }
 }
