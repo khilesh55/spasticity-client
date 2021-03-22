@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Windows.Input;
 using System.Threading.Tasks;
 using LiveCharts;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using LiveCharts.Wpf;
-using System.Windows;
-using System.Linq;
 using Prism.Commands;
 
 namespace SpasticityClient
