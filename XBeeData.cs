@@ -176,13 +176,21 @@ namespace SpasticityClient
                                     #region MSB LSB combination
                                     float elapsedTime = (long)((TIME2MSB & 0xFF) << 24 | (TIME2LSB & 0xFF) << 16 | (TIME1MSB & 0xFF) << 8 | (TIME1LSB & 0xFF));
 
-                                    float angVelX = (long)((AGVLx2MSB_B & 0xFF) << 24 | (AGVLx2LSB_B & 0xFF) << 16 | (AGVLx1MSB_B & 0xFF) << 8 | (AGVLx1LSB_B & 0xFF));
-                                    float angVelY = (long)((AGVLy2MSB_B & 0xFF) << 24 | (AGVLy2LSB_B & 0xFF) << 16 | (AGVLy1MSB_B & 0xFF) << 8 | (AGVLy1LSB_B & 0xFF));
-                                    float angVelZ = (long)((AGVLz2MSB_B & 0xFF) << 24 | (AGVLz2LSB_B & 0xFF) << 16 | (AGVLz1MSB_B & 0xFF) << 8 | (AGVLz1LSB_B & 0xFF));
+                                    float angVelX_A = (long)((AGVLx2MSB_A & 0xFF) << 24 | (AGVLx2LSB_A & 0xFF) << 16 | (AGVLx1MSB_A & 0xFF) << 8 | (AGVLx1LSB_A & 0xFF));
+                                    float angVelY_A = (long)((AGVLy2MSB_A & 0xFF) << 24 | (AGVLy2LSB_A & 0xFF) << 16 | (AGVLy1MSB_A & 0xFF) << 8 | (AGVLy1LSB_A & 0xFF));
+                                    float angVelZ_A = (long)((AGVLz2MSB_A & 0xFF) << 24 | (AGVLz2LSB_A & 0xFF) << 16 | (AGVLz1MSB_A & 0xFF) << 8 | (AGVLz1LSB_A & 0xFF));
 
-                                    float orientX = (long)((ORIEx2MSB_B & 0xFF) << 24 | (ORIEx2LSB_B & 0xFF) << 16 | (ORIEx1MSB_B & 0xFF) << 8 | (ORIEx1LSB_B & 0xFF));
-                                    float orientY = (long)((ORIEy2MSB_B & 0xFF) << 24 | (ORIEy2LSB_B & 0xFF) << 16 | (ORIEy1MSB_B & 0xFF) << 8 | (ORIEy1LSB_B & 0xFF));
-                                    float orientZ = (long)((ORIEz2MSB_B & 0xFF) << 24 | (ORIEz2LSB_B & 0xFF) << 16 | (ORIEz1MSB_B & 0xFF) << 8 | (ORIEz1LSB_B & 0xFF));
+                                    float orientX_A = (long)((ORIEx2MSB_A & 0xFF) << 24 | (ORIEx2LSB_A & 0xFF) << 16 | (ORIEx1MSB_A & 0xFF) << 8 | (ORIEx1LSB_A & 0xFF));
+                                    float orientY_A = (long)((ORIEy2MSB_A & 0xFF) << 24 | (ORIEy2LSB_A & 0xFF) << 16 | (ORIEy1MSB_A & 0xFF) << 8 | (ORIEy1LSB_A & 0xFF));
+                                    float orientZ_A = (long)((ORIEz2MSB_A & 0xFF) << 24 | (ORIEz2LSB_A & 0xFF) << 16 | (ORIEz1MSB_A & 0xFF) << 8 | (ORIEz1LSB_A & 0xFF));
+
+                                    float angVelX_B = (long)((AGVLx2MSB_B & 0xFF) << 24 | (AGVLx2LSB_B & 0xFF) << 16 | (AGVLx1MSB_B & 0xFF) << 8 | (AGVLx1LSB_B & 0xFF));
+                                    float angVelY_B = (long)((AGVLy2MSB_B & 0xFF) << 24 | (AGVLy2LSB_B & 0xFF) << 16 | (AGVLy1MSB_B & 0xFF) << 8 | (AGVLy1LSB_B & 0xFF));
+                                    float angVelZ_B = (long)((AGVLz2MSB_B & 0xFF) << 24 | (AGVLz2LSB_B & 0xFF) << 16 | (AGVLz1MSB_B & 0xFF) << 8 | (AGVLz1LSB_B & 0xFF));
+
+                                    float orientX_B = (long)((ORIEx2MSB_B & 0xFF) << 24 | (ORIEx2LSB_B & 0xFF) << 16 | (ORIEx1MSB_B & 0xFF) << 8 | (ORIEx1LSB_B & 0xFF));
+                                    float orientY_B = (long)((ORIEy2MSB_B & 0xFF) << 24 | (ORIEy2LSB_B & 0xFF) << 16 | (ORIEy1MSB_B & 0xFF) << 8 | (ORIEy1LSB_B & 0xFF));
+                                    float orientZ_B = (long)((ORIEz2MSB_B & 0xFF) << 24 | (ORIEz2LSB_B & 0xFF) << 16 | (ORIEz1MSB_B & 0xFF) << 8 | (ORIEz1LSB_B & 0xFF));
 
                                     float emg = (int)((EMGMSB & 0xFF) << 8 | (EMGLSB & 0xFF));
                                     float force = (int)((FORMSB & 0xFF) << 8 | (FORLSB & 0xFF));
@@ -197,28 +205,38 @@ namespace SpasticityClient
                                         chartModel.ForceValues.RemoveAt(0);
                                     }
 
-                                    var now = DateTime.Now;
+                                    var now = DateTime.Now.Ticks;
                                     chartModel.SetAxisLimits(now);
 
-                                    chartModel.EMGValues.Add(new MeasureModel
+                                    chartModel.EMGValues.Add(new MeasureModel { DateTime = now, Value = emg });
+                                    chartModel.ForceValues.Add(new MeasureModel { DateTime = now, Value = force });
+                                    chartModel.AngleValues.Add(new MeasureModel { DateTime = now, Value = orientX_B });
+                                    chartModel.AngularVelocityValues.Add(new MeasureModel { DateTime = now, Value = angVelX_B });
+                                    #endregion
+
+                                    #region Send data to Excel collection
+                                    chartModel.SessionDatas.Add(new SessionData
                                     {
-                                        DateTime = now,
-                                        Value = emg
-                                    });
-                                    chartModel.ForceValues.Add(new MeasureModel
-                                    {
-                                        DateTime = now,
-                                        Value = force
-                                    });
-                                    chartModel.AngleValues.Add(new MeasureModel
-                                    {
-                                        DateTime = now,
-                                        Value = orientX
-                                    });
-                                    chartModel.AngularVelocityValues.Add(new MeasureModel
-                                    {
-                                        DateTime = now,
-                                        Value = angVelX
+                                        TimeStamp = now,
+
+                                        AngVelX_A = angVelX_A,
+                                        AngVelY_A = angVelY_A,
+                                        AngVelZ_A = angVelZ_A,
+
+                                        OrientX_A = orientX_A,
+                                        OrientY_A = orientY_A,
+                                        OrientZ_A = orientZ_A,
+
+                                        AngVelX_B = angVelX_B,
+                                        AngVelY_B = angVelY_B,
+                                        AngVelZ_B = angVelZ_B,
+
+                                        OrientX_B = orientX_B,
+                                        OrientY_B = orientY_B,
+                                        OrientZ_B = orientZ_B,
+
+                                        EMG = emg,
+                                        Force = force
                                     });
                                     #endregion
 

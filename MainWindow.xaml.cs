@@ -1,4 +1,8 @@
 ﻿using System.Windows;
+using System.Windows.Forms;
+using Syncfusion.XlsIO;
+using System.Drawing;
+using System.IO;
 
 namespace SpasticityClient
 {
@@ -8,11 +12,14 @@ namespace SpasticityClient
     public partial class MainWindow : Window
     {
         private MainWindowViewModel mainWindowViewModel;
+
         public MainWindow()
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjQyNDEwQDMxMzgyZTMxMmUzMGNKSzduS2FuZktxRmJERmkySTJsZjVCWlFPeVRGM3pMa1NPYWlVeUttSzA9");
+            
             InitializeComponent();
             mainWindowViewModel = (MainWindowViewModel)this.DataContext;
         }
+
+        
     }
 }

@@ -52,11 +52,6 @@
         <ContentControl Grid.Row="1" Grid.Column="2" Content="{Binding ChartModel}" ContentTemplate="{StaticResource ForceChart}"/>
         <ContentControl Grid.Row="2" Grid.Column="1" Content="{Binding ChartModel}" ContentTemplate="{StaticResource AngleChart}"/>
         <ContentControl Grid.Row="2" Grid.Column="2" Content="{Binding ChartModel}" ContentTemplate="{StaticResource AngularVelocityChart}"/>
-
-        <Button Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200"
-                Content="Read"
-                Command="{x:Static local:ApplicationCommands.ReadCommand}">
-        </Button>
         
         <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
@@ -65,6 +60,21 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
             
+            <Button Grid.Column="0" VerticalAlignment="Top" Margin="15" HorizontalAlignment="Center" Width="100"
+                Content="Read"
+                Command="{x:Static local:ApplicationCommands.ReadCommand}">
+            </Button>
+
+            <Button Grid.Column="0" VerticalAlignment="Bottom" Margin="15" HorizontalAlignment="Center" Width="100"
+                Content="Stop"
+                Command="{x:Static local:ApplicationCommands.StopCommand}">
+            </Button>
+
+            <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="150"
+                Content="Save to Spreadsheet" 
+                Command="{x:Static local:ApplicationCommands.SaveCommand}">
+            </Button>
+
             <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="30" Text="Port #:"></TextBlock>
             <ComboBox Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" 
                       VerticalAlignment="Center" Width="100" Margin="30" 

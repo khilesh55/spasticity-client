@@ -4,12 +4,13 @@ using LiveCharts;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Prism.Commands;
+using System.Collections.Generic;
 
 namespace SpasticityClient
 {
     public class MeasureModel : INotifyPropertyChanged
     {
-        public DateTime DateTime { get; set; }
+        public long DateTime { get; set; }
         private double _value { get; set; }
         public double Value
         {
@@ -45,6 +46,7 @@ namespace SpasticityClient
         public ChartValues<MeasureModel> ForceValues { get; set; }
         public ChartValues<MeasureModel> AngleValues { get; set; }
         public ChartValues<MeasureModel> AngularVelocityValues { get; set; }
+        public List<SessionData> SessionDatas { get; set; }
 
         public Func<double, string> DateTimeFormatter { get; set; }
         public double AxisStep { get; set; }
@@ -87,7 +89,7 @@ namespace SpasticityClient
             IsRunning = false;
 
             var mapper = LiveCharts.Configurations.Mappers.Xy<MeasureModel>()
-                .X(model => model.DateTime.Ticks)   //use DateTime.Ticks as X
+                .X(model => model.DateTime)   //use DateTime.Ticks as X
                 .Y(model => model.Value);           //use the value property as Y
 
             //lets save the mapper globally.
@@ -98,6 +100,7 @@ namespace SpasticityClient
             ForceValues = new ChartValues<MeasureModel>();
             AngleValues = new ChartValues<MeasureModel>();
             AngularVelocityValues = new ChartValues<MeasureModel>();
+            SessionDatas = new List<SessionData>();
 
             //lets set how to display the X Labels
             DateTimeFormatter = value => new DateTime((long)value).ToString("mm:ss");
@@ -109,7 +112,7 @@ namespace SpasticityClient
             //this is not always necessary, but it can prevent wrong labeling
             AxisUnit = TimeSpan.TicksPerSecond;
 
-            SetAxisLimits(DateTime.Now);
+            SetAxisLimits(DateTime.Now.Ticks);
         }
         #endregion
 
@@ -159,10 +162,10 @@ namespace SpasticityClient
             }
         }
 
-        public void SetAxisLimits(DateTime now)
+        public void SetAxisLimits(long now)
         {
-            Max = now.Ticks + TimeSpan.FromSeconds(0.3).Ticks; // lets force the axis to be 1 second ahead
-            Min = now.Ticks - TimeSpan.FromSeconds(1.5).Ticks; // and 8 seconds behind
+            Max = now + TimeSpan.FromSeconds(0.3).Ticks; // lets force the axis to be 1 second ahead
+            Min = now - TimeSpan.FromSeconds(1.5).Ticks; // and 8 seconds behind
         }
         #endregion
 

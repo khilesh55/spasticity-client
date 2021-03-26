@@ -28,7 +28,6 @@ C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\Debug\AngleChar
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\Debug\AngularVelocityChart.baml
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\Debug\EMGChart.baml
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\Debug\ForceChart.baml
-C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\Debug\SpasticityClient.csprojAssemblyReference.cache
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Microsoft.Xaml.Behaviors.dll
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Prism.dll
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Prism.Wpf.dll
@@ -38,3 +37,11 @@ C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Prism.pdb
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Prism.xml
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Prism.Wpf.pdb
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Prism.Wpf.xml
+C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Syncfusion.Compression.Base.dll
+C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Syncfusion.Licensing.dll
+C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Syncfusion.Shared.WPF.dll
+C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Syncfusion.XlsIO.Base.dll
+C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Syncfusion.Compression.Base.xml
+C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Syncfusion.Shared.WPF.xml
+C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Syncfusion.XlsIO.Base.xml
+C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\Debug\SpasticityClient.csprojAssemblyReference.cache
