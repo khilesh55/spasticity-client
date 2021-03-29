@@ -205,13 +205,15 @@ namespace SpasticityClient
                                         chartModel.ForceValues.RemoveAt(0);
                                     }
 
-                                    var now = DateTime.Now.Ticks;
+                                    var nowticks = DateTime.Now.Ticks;
+                                    var now = nowticks / (10000000);
+
                                     chartModel.SetAxisLimits(now);
 
-                                    chartModel.EMGValues.Add(new MeasureModel { DateTime = now, Value = emg });
-                                    chartModel.ForceValues.Add(new MeasureModel { DateTime = now, Value = force });
-                                    chartModel.AngleValues.Add(new MeasureModel { DateTime = now, Value = orientX_B });
-                                    chartModel.AngularVelocityValues.Add(new MeasureModel { DateTime = now, Value = angVelX_B });
+                                    chartModel.EMGValues.Add(new MeasureModel { DateTime = nowticks, Value = emg });
+                                    chartModel.ForceValues.Add(new MeasureModel { DateTime = nowticks, Value = force });
+                                    chartModel.AngleValues.Add(new MeasureModel { DateTime = nowticks, Value = orientX_B });
+                                    chartModel.AngularVelocityValues.Add(new MeasureModel { DateTime = nowticks, Value = angVelX_B });
                                     #endregion
 
                                     #region Send data to Excel collection
