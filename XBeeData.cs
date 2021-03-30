@@ -205,10 +205,10 @@ namespace SpasticityClient
                                         chartModel.ForceValues.RemoveAt(0);
                                     }
 
-                                    var nowticks = DateTime.Now.Ticks;
-                                    var now = nowticks / (10000000);
+                                    var nowticks = DateTime.Now;
+                                    //var now = nowticks / (10000000);
 
-                                    chartModel.SetAxisLimits(now);
+                                    chartModel.SetAxisLimits(nowticks);
 
                                     chartModel.EMGValues.Add(new MeasureModel { DateTime = nowticks, Value = emg });
                                     chartModel.ForceValues.Add(new MeasureModel { DateTime = nowticks, Value = force });
@@ -219,7 +219,7 @@ namespace SpasticityClient
                                     #region Send data to Excel collection
                                     chartModel.SessionDatas.Add(new SessionData
                                     {
-                                        TimeStamp = now,
+                                        TimeStamp = nowticks.Ticks/10000000,
 
                                         AngVelX_A = angVelX_A,
                                         AngVelY_A = angVelY_A,

@@ -10,7 +10,7 @@ namespace SpasticityClient
 {
     public class MeasureModel : INotifyPropertyChanged
     {
-        public long DateTime { get; set; }
+        public DateTime DateTime { get; set; }
         private double _value { get; set; }
         public double Value
         {
@@ -89,7 +89,7 @@ namespace SpasticityClient
             IsRunning = false;
 
             var mapper = LiveCharts.Configurations.Mappers.Xy<MeasureModel>()
-                .X(model => model.DateTime)   //use DateTime.Ticks as X
+                .X(model => model.DateTime.Ticks)   //use DateTime.Ticks as X
                 .Y(model => model.Value);           //use the value property as Y
 
             //lets save the mapper globally.
@@ -106,13 +106,14 @@ namespace SpasticityClient
             DateTimeFormatter = value => new DateTime((long)value).ToString("mm:ss");
 
             //AxisStep forces the distance between each separator in the X axis
+
             AxisStep = TimeSpan.FromSeconds(1).Ticks;
 
             //AxisUnit forces lets the axis know that we are plotting seconds
             //this is not always necessary, but it can prevent wrong labeling
             AxisUnit = TimeSpan.TicksPerSecond;
 
-            SetAxisLimits(DateTime.Now.Ticks);
+            SetAxisLimits(DateTime.Now);
         }
         #endregion
 
@@ -162,10 +163,10 @@ namespace SpasticityClient
             }
         }
 
-        public void SetAxisLimits(long now)
+        public void SetAxisLimits(DateTime now)
         {
-            Max = now + TimeSpan.FromSeconds(0.3).Ticks; // lets force the axis to be 1 second ahead
-            Min = now - TimeSpan.FromSeconds(1.5).Ticks; // and 8 seconds behind
+            Max = now.Ticks + TimeSpan.FromSeconds(0.3).Ticks; // lets force the axis to be 1 second ahead
+            Min = now.Ticks - TimeSpan.FromSeconds(1.5).Ticks; // and 8 seconds behind
         }
         #endregion
 
