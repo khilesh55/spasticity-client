@@ -16,9 +16,6 @@ namespace SpasticityClient
         private string _portName;
 
         public List<string> PortNames { get; internal set; }
-        public DelegateCommand SaveCommand { get; private set; }
-        public DelegateCommand StopCommand { get; private set; }
-        //public DelegateCommand UpdateCommand { get; private set; }
 
         public ChartModel ChartModel
         {
@@ -44,12 +41,6 @@ namespace SpasticityClient
         public MainWindowViewModel()
         {
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjQyNDEwQDMxMzgyZTMxMmUzMGNKSzduS2FuZktxRmJERmkySTJsZjVCWlFPeVRGM3pMa1NPYWlVeUttSzA9");
-
-            SaveCommand = new DelegateCommand(SaveData);
-            ApplicationCommands.SaveCommand.RegisterCommand(SaveCommand);
-            StopCommand = new DelegateCommand(Stop);
-            ApplicationCommands.StopCommand.RegisterCommand(StopCommand);
-
             PortNames = XBeeFunctions.GetPortNamesByBaudrate(57600);
 
             if (PortNames.Count >= 1)
@@ -66,55 +57,6 @@ namespace SpasticityClient
                 //If no COM port added, then close window.
                 MainWindow mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
                 mainWindow.Close();
-            }
-        }
-
-        private void Stop()
-        {
-
-            Thread.Sleep(100);
-            ChartModel.Dispose();
-        }
-
-        private void SaveData()
-        {
-            using (ExcelEngine excelEngine = new ExcelEngine())
-            {
-                IApplication application = excelEngine.Excel;
-                application.DefaultVersion = ExcelVersion.Excel2016;
-
-                //Create a workbook
-                IWorkbook workbook = application.Workbooks.Create(1);
-                IWorksheet worksheet = workbook.Worksheets[0];
-
-                ExcelImportDataOptions importDataOptions = new ExcelImportDataOptions();
-                importDataOptions.FirstRow = 2;
-                importDataOptions.FirstColumn = 1;
-                importDataOptions.IncludeHeader = true;
-                importDataOptions.PreserveTypes = false;
-
-                worksheet.ImportData(ChartModel.SessionDatas, importDataOptions);
-                workbook.SaveAs("ImportData.xlsx");
-
-                #region View the Workbook
-                //Message box confirmation to view the created document.
-                if (MessageBox.Show("Do you want to view the Excel file?", "Excel file has been created",
-                    MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
-                {
-                    try
-                    {
-                        //Launching the Excel file using the default Application.[MS Excel Or Free ExcelViewer]
-                        System.Diagnostics.Process.Start("ImportData.xlsx");
-
-                        //Exit
-                    }
-                    catch (Win32Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-                }
-                else;
-                #endregion
             }
         }
 

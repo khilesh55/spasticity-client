@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Prism.Commands;
 using System.Collections.Generic;
+using Syncfusion.XlsIO;
+using System.Windows;
 
 namespace SpasticityClient
 {
@@ -40,6 +42,9 @@ namespace SpasticityClient
 
         #region properties
         public DelegateCommand ReadCommand { get; private set; }
+        public DelegateCommand SaveCommand { get; private set; }
+        public DelegateCommand StopCommand { get; set; }
+
         public bool IsRunning { get; set; }
 
         public ChartValues<MeasureModel> EMGValues { get; set; }
@@ -83,9 +88,45 @@ namespace SpasticityClient
         {
             PortName = portname;
             _xbeeData = new XBeeData(portname);
-            //ReadCommand = new RelayCommand(Read);
-            ReadCommand = new DelegateCommand(Read);
+
+            ReadCommand = new DelegateCommand(
+                executeMethod: () =>
+                {
+                    Read();
+                    QueryCanExecute();
+                },
+                canExecuteMethod: () =>
+                {
+                    return IsRunning == false;
+                });
+
+            SaveCommand = new DelegateCommand(
+                executeMethod: () =>
+                {
+                    SaveData();
+                    QueryCanExecute();
+                },
+                canExecuteMethod: () =>
+                {
+                    return IsRunning == false &&
+                           _xbeeData.IsCancelled == true;
+                });
+            StopCommand = new DelegateCommand(
+                executeMethod: () =>
+                {
+                    Dispose();
+                    QueryCanExecute();
+                },
+                canExecuteMethod: () =>
+                {
+                    return IsRunning == true &&
+                        _xbeeData.IsCancelled == false;
+                });
+
             ApplicationCommands.ReadCommand.RegisterCommand(ReadCommand);
+            ApplicationCommands.SaveCommand.RegisterCommand(SaveCommand);
+            ApplicationCommands.StopCommand.RegisterCommand(StopCommand);
+
             IsRunning = false;
 
             var mapper = LiveCharts.Configurations.Mappers.Xy<MeasureModel>()
@@ -163,6 +204,52 @@ namespace SpasticityClient
             }
         }
 
+        public void SaveData()
+        {
+            if (!IsRunning)
+            {
+                using (ExcelEngine excelEngine = new ExcelEngine())
+                {
+                    IApplication application = excelEngine.Excel;
+                    application.DefaultVersion = ExcelVersion.Excel2016;
+
+                    //Create a workbook
+                    IWorkbook workbook = application.Workbooks.Create(1);
+                    IWorksheet worksheet = workbook.Worksheets[0];
+
+                    ExcelImportDataOptions importDataOptions = new ExcelImportDataOptions();
+                    importDataOptions.FirstRow = 2;
+                    importDataOptions.FirstColumn = 1;
+                    importDataOptions.IncludeHeader = true;
+                    importDataOptions.PreserveTypes = false;
+
+                    worksheet.ImportData(SessionDatas, importDataOptions);
+                    workbook.SaveAs("ImportData.xlsx");
+
+                    #region View the Workbook
+                    //Message box confirmation to view the created document.
+                    if (MessageBox.Show("Do you want to view the Excel file?", "Excel file has been created",
+                        MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                    {
+                        try
+                        {
+                            //Launching the Excel file using the default Application.[MS Excel Or Free ExcelViewer]
+                            System.Diagnostics.Process.Start("ImportData.xlsx");
+
+                            //Exit
+                        }
+                        catch (Win32Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+                        }
+                    }
+                    
+                    #endregion
+                }
+                SessionDatas.Clear();
+            }
+        }
+
         public void SetAxisLimits(DateTime now)
         {
             Max = now.Ticks + TimeSpan.FromSeconds(0.3).Ticks; // lets force the axis to be 1 second ahead
@@ -171,6 +258,13 @@ namespace SpasticityClient
         #endregion
 
         #region interface implementation
+
+        void QueryCanExecute()
+        {
+            ReadCommand.RaiseCanExecuteChanged();
+            StopCommand.RaiseCanExecuteChanged();
+            SaveCommand.RaiseCanExecuteChanged();
+        }
 
         protected virtual void OnPropertyChanged(string propertyName = null)
         {
