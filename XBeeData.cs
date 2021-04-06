@@ -41,6 +41,7 @@ namespace SpasticityClient
             try
             {
                 serialPort.Open();
+                var nowstart = DateTime.Now;
                 var remainHex = string.Empty;
                 var packetRemainData = new List<string>();
 
@@ -219,7 +220,7 @@ namespace SpasticityClient
                                     #region Send data to Excel collection
                                     chartModel.SessionDatas.Add(new SessionData
                                     {
-                                        TimeStamp = nowticks.Ticks/10000000,
+                                        TimeStamp = (nowticks-nowstart).Ticks/10000, //time since read start in ms
 
                                         AngVelX_A = angVelX_A,
                                         AngVelY_A = angVelY_A,

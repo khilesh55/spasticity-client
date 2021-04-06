@@ -111,6 +111,7 @@ namespace SpasticityClient
                     return IsRunning == false &&
                            _xbeeData.IsCancelled == true;
                 });
+
             StopCommand = new DelegateCommand(
                 executeMethod: () =>
                 {
@@ -218,7 +219,7 @@ namespace SpasticityClient
                     IWorksheet worksheet = workbook.Worksheets[0];
 
                     ExcelImportDataOptions importDataOptions = new ExcelImportDataOptions();
-                    importDataOptions.FirstRow = 2;
+                    importDataOptions.FirstRow = 1;
                     importDataOptions.FirstColumn = 1;
                     importDataOptions.IncludeHeader = true;
                     importDataOptions.PreserveTypes = false;
@@ -282,11 +283,11 @@ namespace SpasticityClient
         public void Dispose()
         {
             _xbeeData.IsCancelled = true;
+            _xbeeData.Stop();
             EMGValues.Clear();
             ForceValues.Clear();
             AngleValues.Clear();
-            AngularVelocityValues.Clear();
-            _xbeeData.Stop();
+            AngularVelocityValues.Clear(); 
             IsRunning = false;
         }
         #endregion
