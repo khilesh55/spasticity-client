@@ -45,3 +45,5 @@ C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Syncfusio
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Syncfusion.Shared.WPF.xml
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\Debug\Syncfusion.XlsIO.Base.xml
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\Debug\SpasticityClient.csprojAssemblyReference.cache
+C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\Debug\SaveInputDialog.g.cs
+C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\Debug\SaveInputDialog.baml
