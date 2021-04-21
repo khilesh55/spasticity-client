@@ -7,6 +7,8 @@ using Prism.Commands;
 using System.Collections.Generic;
 using Syncfusion.XlsIO;
 using System.Windows;
+using System.IO;
+using System.Diagnostics;
 
 namespace SpasticityClient
 {
@@ -224,8 +226,15 @@ namespace SpasticityClient
                     importDataOptions.IncludeHeader = true;
                     importDataOptions.PreserveTypes = false;
 
+                    string spreadsheetNamePath = "acquiredData/";
+                    string spreadsheetNameDate = DateTime.Now.ToString("dddd dd MMM y HHmmss");
+                    string spreadsheetName = spreadsheetNamePath + spreadsheetNameDate;
+
+                    string path = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName)
+                    + "\\acquiredData\\";
+
                     worksheet.ImportData(SessionDatas, importDataOptions);
-                    workbook.SaveAs("ImportData.xlsx");
+                    workbook.SaveAs(spreadsheetName + ".xlsx");
 
                     #region View the Workbook
                     //Message box confirmation to view the created document.
@@ -235,7 +244,7 @@ namespace SpasticityClient
                         try
                         {
                             //Launching the Excel file using the default Application.[MS Excel Or Free ExcelViewer]
-                            System.Diagnostics.Process.Start("ImportData.xlsx");
+                            Process.Start(path+spreadsheetNameDate + ".xlsx");
 
                             //Exit
                         }
