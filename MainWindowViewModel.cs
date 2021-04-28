@@ -1,11 +1,8 @@
-﻿using Prism.Commands;
-using Syncfusion.XlsIO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Windows;
 
 namespace SpasticityClient
@@ -45,10 +42,8 @@ namespace SpasticityClient
 
             if (PortNames.Count >= 1)
             {
-                //PortName = "";
                 if (PortNames.Count == 1)
                     _portName = PortNames[0];
-                    //_portName = "COM 7";
 
             }
             else

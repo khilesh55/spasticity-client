@@ -3,16 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:chart="clr-namespace:SpasticityClient"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="330" d:DesignWidth="300">
     <Grid Margin="5">
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="0.1*"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
+        
         <TextBlock Grid.Row="0" Text="Angular Velocity" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+        
         <lvc:CartesianChart Grid.Row="1" AnimationsSpeed="0:0:0.5" DataTooltip="{x:Null}" Height="auto" Width="auto" Hoverable="False">
             <lvc:CartesianChart.Series>
                 <lvc:LineSeries Values="{Binding AngularVelocityValues}" 
@@ -23,7 +25,7 @@
             </lvc:CartesianChart.Series>
             <lvc:CartesianChart.AxisY>
                 <lvc:Axis MinValue="0" 
-                          MaxValue="360"></lvc:Axis>
+                          MaxValue="250"></lvc:Axis>
             </lvc:CartesianChart.AxisY>
             <lvc:CartesianChart.AxisX>
                 <lvc:Axis MinValue="{Binding Min}" 

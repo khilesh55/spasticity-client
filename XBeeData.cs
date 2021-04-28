@@ -17,16 +17,11 @@ namespace SpasticityClient
 
         #region construct
 
-        // 2 methods to construct an XBeeData, w/ or w/o baudrate
         public XBeeData(string portName)
         {
             serialPort = new SerialPort(portName, 57600, Parity.None, 8, StopBits.One);
         }
 
-        public XBeeData(string portName, int baudrate)
-        {
-            serialPort = new SerialPort(portName, baudrate, Parity.None, 8, StopBits.One);
-        }
         #endregion
 
         // Dispose of the serial port

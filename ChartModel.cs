@@ -53,6 +53,7 @@ namespace SpasticityClient
         public ChartValues<MeasureModel> ForceValues { get; set; }
         public ChartValues<MeasureModel> AngleValues { get; set; }
         public ChartValues<MeasureModel> AngularVelocityValues { get; set; }
+
         public List<SessionData> SessionDatas { get; set; }
 
         public Func<double, string> DateTimeFormatter { get; set; }
@@ -132,6 +133,7 @@ namespace SpasticityClient
 
             IsRunning = false;
 
+            //For configuring LiveCharts to use MeasureModel for X and Y
             var mapper = LiveCharts.Configurations.Mappers.Xy<MeasureModel>()
                 .X(model => model.DateTime.Ticks)   //use DateTime.Ticks as X
                 .Y(model => model.Value);           //use the value property as Y
@@ -144,6 +146,7 @@ namespace SpasticityClient
             ForceValues = new ChartValues<MeasureModel>();
             AngleValues = new ChartValues<MeasureModel>();
             AngularVelocityValues = new ChartValues<MeasureModel>();
+
             SessionDatas = new List<SessionData>();
 
             //lets set how to display the X Labels
@@ -161,7 +164,7 @@ namespace SpasticityClient
         }
         #endregion
 
-        #region method
+        #region methods
 
         public void Read()
         {
