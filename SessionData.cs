@@ -26,6 +26,7 @@ namespace SpasticityClient
         public float OrientY_B { get; set; }
         public float OrientZ_B { get; set; }
 
+        public float Angle { get; set; }
         public float EMG { get; set; }
         public float Force { get; set; }
     }

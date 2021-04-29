@@ -70,7 +70,7 @@ namespace SpasticityClient
                         {
                             //Total transmitted data is 30 byte long. 1 more byte should be checksum. prefixchar is the extra header due to API Mode
                             int prefixCharLength = 8;
-                            int byteArrayLength = 69;
+                            int byteArrayLength = 99;
                             int checkSumLength = 1;
                             int totalExpectedCharLength = prefixCharLength + byteArrayLength + checkSumLength;
 
@@ -85,7 +85,7 @@ namespace SpasticityClient
                                 {
                                     var data = packetData;
 
-                                    #region Convert string to byte for later MSB and LSB combination- 16 bit to 18 bit
+                                    #region Convert string to byte for later MSB and LSB combination- 16 bit to 8 bit
                                     //convert timestamp
                                     var TIME2MSB = Convert.ToByte(data[8], 16);
                                     var TIME2LSB = Convert.ToByte(data[9], 16);
@@ -167,6 +167,49 @@ namespace SpasticityClient
                                     //convert force
                                     var FORMSB = Convert.ToByte(data[62], 16);
                                     var FORLSB = Convert.ToByte(data[63], 16);
+
+                                    #region Quaternion Values
+                                    //convert quaternion values --- A
+                                    var QUATw2MSB_A = Convert.ToByte(data[64], 16);
+                                    var QUATw2LSB_A = Convert.ToByte(data[65], 16);
+                                    var QUATw1MSB_A = Convert.ToByte(data[66], 16);
+                                    var QUATw1LSB_A = Convert.ToByte(data[67], 16);
+
+                                    var QUATx2MSB_A = Convert.ToByte(data[68], 16);
+                                    var QUATx2LSB_A = Convert.ToByte(data[69], 16);
+                                    var QUATx1MSB_A = Convert.ToByte(data[70], 16);
+                                    var QUATx1LSB_A = Convert.ToByte(data[71], 16);
+
+                                    var QUATy2MSB_A = Convert.ToByte(data[72], 16);
+                                    var QUATy2LSB_A = Convert.ToByte(data[73], 16);
+                                    var QUATy1MSB_A = Convert.ToByte(data[74], 16);
+                                    var QUATy1LSB_A = Convert.ToByte(data[75], 16);
+
+                                    var QUATz2MSB_A = Convert.ToByte(data[76], 16);
+                                    var QUATz2LSB_A = Convert.ToByte(data[77], 16);
+                                    var QUATz1MSB_A = Convert.ToByte(data[78], 16);
+                                    var QUATz1LSB_A = Convert.ToByte(data[79], 16);
+
+                                    //convert quaternion values --- B
+                                    var QUATw2MSB_B = Convert.ToByte(data[80], 16);
+                                    var QUATw2LSB_B = Convert.ToByte(data[81], 16);
+                                    var QUATw1MSB_B = Convert.ToByte(data[82], 16);
+                                    var QUATw1LSB_B = Convert.ToByte(data[83], 16);
+
+                                    var QUATx2MSB_B = Convert.ToByte(data[84], 16);
+                                    var QUATx2LSB_B = Convert.ToByte(data[85], 16);
+                                    var QUATx1MSB_B = Convert.ToByte(data[86], 16);
+                                    var QUATx1LSB_B = Convert.ToByte(data[87], 16);
+
+                                    var QUATy2MSB_B = Convert.ToByte(data[88], 16);
+                                    var QUATy2LSB_B = Convert.ToByte(data[89], 16);
+                                    var QUATy1MSB_B = Convert.ToByte(data[90], 16);
+                                    var QUATy1LSB_B = Convert.ToByte(data[91], 16);
+
+                                    var QUATz2MSB_B = Convert.ToByte(data[92], 16);
+                                    var QUATz2LSB_B = Convert.ToByte(data[93], 16);
+                                    var QUATz1MSB_B = Convert.ToByte(data[94], 16);
+                                    var QUATz1LSB_B = Convert.ToByte(data[95], 16);
                                     #endregion
 
                                     #region MSB LSB combination
@@ -188,8 +231,22 @@ namespace SpasticityClient
                                     float orientY_B = (long)((ORIEy2MSB_B & 0xFF) << 24 | (ORIEy2LSB_B & 0xFF) << 16 | (ORIEy1MSB_B & 0xFF) << 8 | (ORIEy1LSB_B & 0xFF));
                                     float orientZ_B = (long)((ORIEz2MSB_B & 0xFF) << 24 | (ORIEz2LSB_B & 0xFF) << 16 | (ORIEz1MSB_B & 0xFF) << 8 | (ORIEz1LSB_B & 0xFF));
 
+                                    float quatW_A = (long)((QUATw2MSB_A & 0xFF) << 24 | (QUATw2LSB_A & 0xFF) << 16 | (QUATw1MSB_A & 0xFF) << 8 | (QUATw1LSB_A & 0xFF)) / 1000;
+                                    float quatX_A = (long)((QUATx2MSB_A & 0xFF) << 24 | (QUATx2LSB_A & 0xFF) << 16 | (QUATx1MSB_A & 0xFF) << 8 | (QUATx1LSB_A & 0xFF)) / 1000;
+                                    float quatY_A = (long)((QUATy2MSB_A & 0xFF) << 24 | (QUATy2LSB_A & 0xFF) << 16 | (QUATy1MSB_A & 0xFF) << 8 | (QUATy1LSB_A & 0xFF)) / 1000;
+                                    float quatZ_A = (long)((QUATz2MSB_A & 0xFF) << 24 | (QUATz2LSB_A & 0xFF) << 16 | (QUATz1MSB_A & 0xFF) << 8 | (QUATz1LSB_A & 0xFF)) / 1000;
+
+                                    float quatW_B = (long)((QUATw2MSB_B & 0xFF) << 24 | (QUATw2LSB_B & 0xFF) << 16 | (QUATw1MSB_B & 0xFF) << 8 | (QUATw1LSB_B & 0xFF)) / 1000;
+                                    float quatX_B = (long)((QUATx2MSB_B & 0xFF) << 24 | (QUATx2LSB_B & 0xFF) << 16 | (QUATx1MSB_B & 0xFF) << 8 | (QUATx1LSB_B & 0xFF)) / 1000;
+                                    float quatY_B = (long)((QUATy2MSB_B & 0xFF) << 24 | (QUATy2LSB_B & 0xFF) << 16 | (QUATy1MSB_B & 0xFF) << 8 | (QUATy1LSB_B & 0xFF)) / 1000;
+                                    float quatZ_B = (long)((QUATz2MSB_B & 0xFF) << 24 | (QUATz2LSB_B & 0xFF) << 16 | (QUATz1MSB_B & 0xFF) << 8 | (QUATz1LSB_B & 0xFF)) / 1000;
+
                                     float emg = (int)((EMGMSB & 0xFF) << 8 | (EMGLSB & 0xFF));
                                     float force = (int)((FORMSB & 0xFF) << 8 | (FORLSB & 0xFF));
+                                    #endregion
+
+                                    #region Quaternion Angle Calculation
+                                    float angle = (float)(2 * Math.Acos(Math.Abs(quatW_A*quatW_B + quatX_A*quatX_B + quatY_A*quatY_B + quatZ_A*quatZ_B)));
                                     #endregion
 
                                     #region Send data to chart model
@@ -208,14 +265,14 @@ namespace SpasticityClient
 
                                     chartModel.EMGValues.Add(new MeasureModel { DateTime = nowticks, Value = emg });
                                     chartModel.ForceValues.Add(new MeasureModel { DateTime = nowticks, Value = force });
-                                    chartModel.AngleValues.Add(new MeasureModel { DateTime = nowticks, Value = orientX_B });
+                                    chartModel.AngleValues.Add(new MeasureModel { DateTime = nowticks, Value = angle });
                                     chartModel.AngularVelocityValues.Add(new MeasureModel { DateTime = nowticks, Value = angVelX_B });
                                     #endregion
 
                                     #region Send data to Excel collection
                                     chartModel.SessionDatas.Add(new SessionData
                                     {
-                                        TimeStamp = (nowticks-nowstart).Ticks/10000, //time since read start in ms
+                                        TimeStamp = (nowticks - nowstart).Ticks / 10000, //time since read start in ms
 
                                         AngVelX_A = angVelX_A,
                                         AngVelY_A = angVelY_A,
@@ -233,9 +290,10 @@ namespace SpasticityClient
                                         OrientY_B = orientY_B,
                                         OrientZ_B = orientZ_B,
 
+                                        Angle = angle,
                                         EMG = emg,
                                         Force = force
-                                    });
+                                    }); ;
                                     #endregion
 
                                     Thread.Sleep(30);
@@ -268,3 +326,4 @@ namespace SpasticityClient
         }
     }
 }
+#endregion
