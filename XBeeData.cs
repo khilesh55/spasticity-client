@@ -70,7 +70,7 @@ namespace SpasticityClient
                         {
                             //Total transmitted data is 30 byte long. 1 more byte should be checksum. prefixchar is the extra header due to API Mode
                             int prefixCharLength = 8;
-                            int byteArrayLength = 99;
+                            int byteArrayLength = 100;
                             int checkSumLength = 1;
                             int totalExpectedCharLength = prefixCharLength + byteArrayLength + checkSumLength;
 
@@ -210,6 +210,12 @@ namespace SpasticityClient
                                     var QUATz2LSB_B = Convert.ToByte(data[93], 16);
                                     var QUATz1MSB_B = Convert.ToByte(data[94], 16);
                                     var QUATz1LSB_B = Convert.ToByte(data[95], 16);
+
+                                    //convert potentiometer edge computer angle and angvel values. AngVel only updated once per 30 packets
+                                    var POTANGLEMSB = Convert.ToByte(data[96], 16);
+                                    var POTANGLELSB = Convert.ToByte(data[97], 16);
+                                    var POTANGVELMSB = Convert.ToByte(data[98], 16);
+                                    var POTANGVELLSB = Convert.ToByte(data[99], 16);
                                     #endregion
 
                                     #region MSB LSB combination
@@ -243,10 +249,9 @@ namespace SpasticityClient
 
                                     float emg = (int)((EMGMSB & 0xFF) << 8 | (EMGLSB & 0xFF));
                                     float force = (int)((FORMSB & 0xFF) << 8 | (FORLSB & 0xFF));
-                                    #endregion
 
-                                    #region Quaternion Angle Calculation
-                                    float angle = (float)(2 * Math.Acos(Math.Abs(quatW_A*quatW_B + quatX_A*quatX_B + quatY_A*quatY_B + quatZ_A*quatZ_B)));
+                                    float angle = (int)((POTANGLEMSB & 0xFF) << 8 | (POTANGLELSB & 0xFF));
+                                    float angVel = (int)((POTANGVELMSB & 0xFF) << 8 | (POTANGVELLSB & 0xFF));
                                     #endregion
 
                                     #region Send data to chart model
@@ -266,7 +271,7 @@ namespace SpasticityClient
                                     chartModel.EMGValues.Add(new MeasureModel { DateTime = nowticks, Value = emg });
                                     chartModel.ForceValues.Add(new MeasureModel { DateTime = nowticks, Value = force });
                                     chartModel.AngleValues.Add(new MeasureModel { DateTime = nowticks, Value = angle });
-                                    chartModel.AngularVelocityValues.Add(new MeasureModel { DateTime = nowticks, Value = angVelX_B });
+                                    chartModel.AngularVelocityValues.Add(new MeasureModel { DateTime = nowticks, Value = angVel });
                                     #endregion
 
                                     #region Send data to Excel collection
@@ -291,6 +296,7 @@ namespace SpasticityClient
                                         OrientZ_B = orientZ_B,
 
                                         Angle = angle,
+                                        AngVel = angVel,
                                         EMG = emg,
                                         Force = force
                                     }); ;

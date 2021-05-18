@@ -91,13 +91,13 @@ namespace SpasticityClient
                                 break;
 
                             var packetDataBytes = hexFull.GetRange(4, length);
-
+                              
                             var source16Addess = string.Join("", packetDataBytes.GetRange(0, 2));
 
                             var RSSI = packetDataBytes[2];
                             var receiveOption = packetDataBytes[3];
-                            var data = packetDataBytes.GetRange(4, length - 5);
-                            var checkSum = packetDataBytes[length - 1];
+                            var data = packetDataBytes.GetRange(4, length - 4);
+                            var checkSum = packetDataBytes[length-1];
 
                             XBeePacket xbeePacket = new XBeePacket();
                             xbeePacket.StartDelimiter = hexFull[0];
