@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\Release\
+C:\Users\VR-7\source\repos\RespirationClient\obj\Release\
 SpasticityClient
 none
 false
 TRACE
-C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\App.xaml
+C:\Users\VR-7\source\repos\RespirationClient\App.xaml
 51531206950
 
 14-1889419831
-15998862374
+161419015049
 AngleChart.xaml;AngularVelocityChart.xaml;EMGChart.xaml;ForceChart.xaml;MainWindow.xaml;
 
-False
+True
 
