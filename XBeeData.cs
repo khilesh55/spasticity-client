@@ -39,12 +39,23 @@ namespace SpasticityClient
                 var nowstart = DateTime.Now;
                 var remainHex = string.Empty;
                 var packetRemainData = new List<string>();
+                
+                //
+                float timeDiff = 0;
+                float lastElapsedTime = 0;
+                float lastAngle = 0;
+                float angleDiff = 0;
+                float angVel = 0;
+                var counter = 1;
+                int angleBufferSize = 15;
+                List<float> angVelArray = new List<float>();
 
                 //infinite loop will keep running and adding to EMGInfo until IsCancelled is set to true
                 while (IsCancelled == false)
                 {
                     //Check if any bytes of data received in serial buffer
                     var totalbytes = serialPort.BytesToRead;
+                    
 
                     Thread.Sleep(30);
 
@@ -68,11 +79,12 @@ namespace SpasticityClient
 
                         foreach (var packet in packets)
                         {
-                            //Total transmitted data is 30 byte long. 1 more byte should be checksum. prefixchar is the extra header due to API Mode
+                            //Total transmitted data is [] byte long. 1 more byte should be checksum. prefixchar is the extra header due to API Mode
                             int prefixCharLength = 8;
-                            int byteArrayLength = 100;
+                            int byteArrayLength = 99;
                             int checkSumLength = 1;
                             int totalExpectedCharLength = prefixCharLength + byteArrayLength + checkSumLength;
+                            
 
                             //Based on above variables to parse data coming from SerialPort. Next fun is performed sequentially to all packets
                             var packetDatas = XBeeFunctions.ParseRFDataHex(packet.Data, packetRemainData, totalExpectedCharLength);
@@ -81,16 +93,19 @@ namespace SpasticityClient
                             {
                                 //Make sure it's 25 charactors long. It's same as the arduino receiver code for checking the length. This was previously compared to totalExpectedCharLength but looks like packetDatas - packetData only contains the data part anyway therefore compare to byteArrayLength
                                 //Also modify data defn to be packetData itself
-                                if (packetData.Count == byteArrayLength)
+                                if (packetData.Count == (byteArrayLength+checkSumLength))
                                 {
                                     var data = packetData;
 
                                     #region Convert string to byte for later MSB and LSB combination- 16 bit to 8 bit
+
+                                    #region Time
                                     //convert timestamp
                                     var TIME2MSB = Convert.ToByte(data[8], 16);
                                     var TIME2LSB = Convert.ToByte(data[9], 16);
                                     var TIME1MSB = Convert.ToByte(data[10], 16);
                                     var TIME1LSB = Convert.ToByte(data[11], 16);
+                                    #endregion
 
                                     #region IMU A Velocity and Orientation
                                     //convert IMU angular velocity in x, y, z --- A
@@ -160,6 +175,7 @@ namespace SpasticityClient
                                     var ORIEz1LSB_B = Convert.ToByte(data[59], 16);
                                     #endregion
 
+                                    #region EMG and Force
                                     //convert rectified EMG
                                     var EMGMSB = Convert.ToByte(data[60], 16);
                                     var EMGLSB = Convert.ToByte(data[61], 16);
@@ -167,6 +183,7 @@ namespace SpasticityClient
                                     //convert force
                                     var FORMSB = Convert.ToByte(data[62], 16);
                                     var FORLSB = Convert.ToByte(data[63], 16);
+                                    #endregion
 
                                     #region Quaternion Values
                                     //convert quaternion values --- A
@@ -210,8 +227,11 @@ namespace SpasticityClient
                                     var QUATz2LSB_B = Convert.ToByte(data[93], 16);
                                     var QUATz1MSB_B = Convert.ToByte(data[94], 16);
                                     var QUATz1LSB_B = Convert.ToByte(data[95], 16);
+                                    #endregion
 
-                                    //convert potentiometer edge computer angle and angvel values. AngVel only updated once per 30 packets
+                                    #region Potentiometer Values
+                                    //convert potentiometer edge computer angle and angvel values. Note POTANGVEL values are not used because the packets are coming out one byte short and 
+                                    // therefore there is a problem with angVel. Instead AngVel is computed here instead of edge computed on the device's Feather M0
                                     var POTANGLEMSB = Convert.ToByte(data[96], 16);
                                     var POTANGLELSB = Convert.ToByte(data[97], 16);
                                     var POTANGVELMSB = Convert.ToByte(data[98], 16);
@@ -247,11 +267,35 @@ namespace SpasticityClient
                                     float quatY_B = (long)((QUATy2MSB_B & 0xFF) << 24 | (QUATy2LSB_B & 0xFF) << 16 | (QUATy1MSB_B & 0xFF) << 8 | (QUATy1LSB_B & 0xFF)) / 1000;
                                     float quatZ_B = (long)((QUATz2MSB_B & 0xFF) << 24 | (QUATz2LSB_B & 0xFF) << 16 | (QUATz1MSB_B & 0xFF) << 8 | (QUATz1LSB_B & 0xFF)) / 1000;
 
-                                    float emg = (int)((EMGMSB & 0xFF) << 8 | (EMGLSB & 0xFF));
+                                    float emg = (int)(EMGMSB & 0xFF) << 8 | (EMGLSB & 0xFF);
                                     float force = (int)((FORMSB & 0xFF) << 8 | (FORLSB & 0xFF));
 
                                     float angle = (int)((POTANGLEMSB & 0xFF) << 8 | (POTANGLELSB & 0xFF));
-                                    float angVel = (int)((POTANGVELMSB & 0xFF) << 8 | (POTANGVELLSB & 0xFF));
+                                    //float angVel = (long)((POTANGVELMSB & 0xFF) << 8 | (POTANGVELLSB & 0xFF)); --not used because of missing bytes
+                                    #endregion
+
+                                    #region Calculate angVel from angle
+                                    if ((counter == 1)|(counter % 1 == 0))
+                                    {
+                                        timeDiff = elapsedTime - lastElapsedTime;
+                                        angleDiff = angle - lastAngle;
+
+                                        var angVelResult = Math.Abs(angleDiff /(timeDiff/1000));
+
+                                        if (counter < angleBufferSize)
+                                        {
+                                            angVelArray.Add(angVelResult);
+                                        }
+                                        else
+                                        {
+                                            angVelArray.RemoveAt(0);
+                                            angVelArray.Add(angVelResult);
+                                        }
+
+                                        angVel = MovingAverage(angleBufferSize, angVelArray);
+                                        lastElapsedTime = elapsedTime;
+                                        lastAngle = angle;
+                                    }
                                     #endregion
 
                                     #region Send data to chart model
@@ -302,6 +346,7 @@ namespace SpasticityClient
                                     }); ;
                                     #endregion
 
+                                    counter++;
                                     Thread.Sleep(30);
                                 }
                             }
@@ -313,6 +358,13 @@ namespace SpasticityClient
             {
                 Stop();
             }
+        }
+
+        public float MovingAverage(int arrayLength, List<float> angleArray)
+        {
+            float movingSum = angleArray.Sum();
+            float movingAverage = movingSum / arrayLength;
+            return movingAverage;
         }
 
         // Stop reading

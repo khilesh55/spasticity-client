@@ -9,6 +9,7 @@ using Syncfusion.XlsIO;
 using System.Windows;
 using System.IO;
 using System.Diagnostics;
+using System.Threading;
 
 namespace SpasticityClient
 {
@@ -256,10 +257,11 @@ namespace SpasticityClient
                             Console.WriteLine(ex.ToString());
                         }
                     }
-                    
+                    // Now that the file has been created, delete contents of SessionDatas
+                    Thread.Sleep(500);
+                    SessionDatas.Clear();
                     #endregion
                 }
-                SessionDatas.Clear();
             }
         }
 
@@ -294,12 +296,13 @@ namespace SpasticityClient
 
         public void Dispose()
         {
+            
             _xbeeData.IsCancelled = true;
             _xbeeData.Stop();
             EMGValues.Clear();
             ForceValues.Clear();
             AngleValues.Clear();
-            AngularVelocityValues.Clear(); 
+            AngularVelocityValues.Clear();
             IsRunning = false;
         }
         #endregion
