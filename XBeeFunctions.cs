@@ -58,7 +58,6 @@ namespace SpasticityClient
                         }
                     }
                 }
-
                 if (noNextStart)
                     break;
             }
