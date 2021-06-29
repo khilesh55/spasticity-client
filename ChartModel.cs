@@ -220,24 +220,68 @@ namespace SpasticityClient
                     IApplication application = excelEngine.Excel;
                     application.DefaultVersion = ExcelVersion.Excel2016;
 
-                    //Create a workbook
+                    //Create a workbook and enable calculations
                     IWorkbook workbook = application.Workbooks.Create(1);
                     IWorksheet worksheet = workbook.Worksheets[0];
+                    worksheet.EnableSheetCalculations();
 
+                    //Import data from SessionDatas
                     ExcelImportDataOptions importDataOptions = new ExcelImportDataOptions();
                     importDataOptions.FirstRow = 1;
                     importDataOptions.FirstColumn = 1;
                     importDataOptions.IncludeHeader = true;
                     importDataOptions.PreserveTypes = false;
+                    worksheet.ImportData(SessionDatas, importDataOptions);
 
+                    #region Calculate summary statistics
+                    //Set Labels
+                    worksheet.Range["G2"].Text = "Min";
+                    worksheet.Range["G3"].Text = "Max";
+                    worksheet.Range["G4"].Text = "Range";
+                    worksheet.Range["G5"].Text = "Mean";
+                    worksheet.Range["G6"].Text = "StDev";
+                    worksheet.Range["H1"].Text = "Angle";
+                    worksheet.Range["I1"].Text = "AngVel";
+                    worksheet.Range["J1"].Text = "EMG";
+                    worksheet.Range["K1"].Text = "Force";
+
+                    //Angle
+                    worksheet.Range["H2"].Formula = "=MIN(B:B)";
+                    worksheet.Range["H3"].Formula = "=MAX(B:B)";
+                    worksheet.Range["H4"].Formula = "=ABS(H3-H2)";
+                    worksheet.Range["H5"].Formula = "=AVERAGE(B:B)";
+                    worksheet.Range["H6"].Formula = "=STDEV.P(B:B)";
+
+                    //Angular Velocity
+                    worksheet.Range["I2"].Formula = "=MIN(C:C)";
+                    worksheet.Range["I3"].Formula = "=MAX(C:C)";
+                    worksheet.Range["I4"].Formula = "=ABS(I3-I2)";
+                    worksheet.Range["I5"].Formula = "=AVERAGE(C:C)";
+                    worksheet.Range["I6"].Formula = "=STDEV.P(C:C)";
+
+                    //EMG
+                    worksheet.Range["J2"].Formula = "=MIN(D:D)";
+                    worksheet.Range["J3"].Formula = "=MAX(D:D)";
+                    worksheet.Range["J4"].Formula = "=ABS(J3-J2)";
+                    worksheet.Range["J5"].Formula = "=AVERAGE(D:D)";
+                    worksheet.Range["J6"].Formula = "=STDEV.P(D:D)";
+
+                    //Force
+                    worksheet.Range["K2"].Formula = "=MIN(E:E)";
+                    worksheet.Range["K3"].Formula = "=MAX(E:E)";
+                    worksheet.Range["K4"].Formula = "=ABS(K3-K2)";
+                    worksheet.Range["K5"].Formula = "=AVERAGE(E:E)";
+                    worksheet.Range["K6"].Formula = "=STDEV.P(E:E)";
+                    #endregion
+
+                    //Set path and save
                     string spreadsheetNamePath = "acquiredData/";
                     string spreadsheetNameDate = DateTime.Now.ToString("dddd dd MMM y HHmmss");
                     string spreadsheetName = spreadsheetNamePath + spreadsheetNameDate;
-
                     string path = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName)
                     + "\\acquiredData\\";
 
-                    worksheet.ImportData(SessionDatas, importDataOptions);
+                    worksheet.DisableSheetCalculations();
                     workbook.SaveAs(spreadsheetName + ".xlsx");
 
                     #region View the Workbook
