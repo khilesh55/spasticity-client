@@ -36,7 +36,7 @@ namespace SpasticityClient
             try
             {
                 serialPort.Open();
-                var nowstart = DateTime.Now;
+                //var nowstart = DateTime.Now;
                 var remainHex = string.Empty;
                 var packetRemainData = new List<string>();
                 
@@ -50,8 +50,12 @@ namespace SpasticityClient
                 float initialForce = 0;
 
                 var counter = 1;
-                int angleBufferSize = 15;
+                var loopIndex = 1;
+                int angleBufferSize = 10;
+                List<float> angleArray = new List<float>();
                 List<float> angVelArray = new List<float>();
+                List<float> forceCalArray = new List<float>();
+                //var nowstart = DateTime.Now;
 
                 //infinite loop will keep running and adding to EMGInfo until IsCancelled is set to true
                 while (IsCancelled == false)
@@ -60,10 +64,12 @@ namespace SpasticityClient
                     var totalbytes = serialPort.BytesToRead;
                     Thread.Sleep(30);
 
+                    if (loopIndex == 1) { var nowstart = DateTime.Now; };
                     if (totalbytes > 0)
                     {
                         //Load all the serial data to buffer
                         var buffer = new byte[totalbytes];
+                        var nowticks = DateTime.Now;
                         serialPort.Read(buffer, 0, buffer.Length);
 
                         //convert bytes to hex to better visualize and parse. 
@@ -82,7 +88,7 @@ namespace SpasticityClient
                         {
                             //Total transmitted data is [] byte long. 1 more byte should be checksum. prefixchar is the extra header due to API Mode
                             int prefixCharLength = 8;
-                            int byteArrayLength = 99;
+                            int byteArrayLength = 25;
                             int checkSumLength = 1;
                             int totalExpectedCharLength = prefixCharLength + byteArrayLength + checkSumLength;
 
@@ -93,7 +99,7 @@ namespace SpasticityClient
                             {
                                 //Make sure it's 25 charactors long. It's same as the arduino receiver code for checking the length. This was previously compared to totalExpectedCharLength but looks like packetDatas - packetData only contains the data part anyway therefore compare to byteArrayLength
                                 //Also modify data defn to be packetData itself
-                                if (packetData.Count == (byteArrayLength+checkSumLength))
+                                if (packetData.Count == (prefixCharLength+byteArrayLength+checkSumLength))
                                 {
                                     var data = packetData;
 
@@ -177,12 +183,12 @@ namespace SpasticityClient
 
                                     #region EMG and Force
                                     //convert rectified EMG
-                                    var EMGMSB = Convert.ToByte(data[60], 16);
-                                    var EMGLSB = Convert.ToByte(data[61], 16);
+                                    var EMGMSB = Convert.ToByte(data[12], 16);
+                                    var EMGLSB = Convert.ToByte(data[13], 16);
 
                                     //convert force
-                                    var FORMSB = Convert.ToByte(data[62], 16);
-                                    var FORLSB = Convert.ToByte(data[63], 16);
+                                    var FORMSB = Convert.ToByte(data[14], 16);
+                                    var FORLSB = Convert.ToByte(data[15], 16);
                                     #endregion
 
                                     #region Quaternion Values
@@ -232,10 +238,8 @@ namespace SpasticityClient
                                     #region Potentiometer Values
                                     //convert potentiometer edge computer angle and angvel values. Note POTANGVEL values are not used because the packets are coming out one byte short and 
                                     // therefore there is a problem with angVel. Instead AngVel is computed here instead of edge computed on the device's Feather M0
-                                    var POTANGLEMSB = Convert.ToByte(data[96], 16);
-                                    var POTANGLELSB = Convert.ToByte(data[97], 16);
-                                    var POTANGVELMSB = Convert.ToByte(data[98], 16);
-                                    var POTANGVELLSB = Convert.ToByte(data[99], 16);
+                                    var POTANGLEMSB = Convert.ToByte(data[16], 16);
+                                    var POTANGLELSB = Convert.ToByte(data[17], 16);
                                     #endregion
 
                                     #region MSB LSB combination
@@ -272,34 +276,40 @@ namespace SpasticityClient
                                     #endregion
 
                                     #region Calculate angVel from angle
-                                    if ((counter == 1)|(counter % 1 == 0))
-                                    {
                                         timeDiff = elapsedTime - lastElapsedTime;
                                         angleDiff = angle - lastAngle;
 
                                         var angVelResult = Math.Abs(angleDiff /(timeDiff/1000));
-
-                                        if (counter < angleBufferSize)
+                                        
+                                        if (counter < (angleBufferSize+1))
                                         {
-                                            angVelArray.Add(angVelResult);
+                                            angleArray.Add(angle);
+                                            angVelArray.Add(0);
+                                            angVel = 0;
                                         }
                                         else
-                                        {
-                                            angVelArray.RemoveAt(0);
+                                        {   
+                                            
+                                            
+                                            angleArray.Add(angle);
                                             angVelArray.Add(angVelResult);
+                                            angVel = Math.Abs((angleArray[angleBufferSize] - angleArray[0])/(timeDiff*angleBufferSize/1000));
+                                            angleArray.RemoveAt(0);
+                                            angVelArray.RemoveAt(0);
                                         }
 
-                                        angVel = MovingAverage(angleBufferSize, angVelArray);
-                                        lastElapsedTime = elapsedTime;
-                                        lastAngle = angle;
-                                    }
+                                    angVel = MovingAverage(angleBufferSize, angVelArray);
+                                    
+                                    lastElapsedTime = elapsedTime;
+                                    lastAngle = angle;
                                     #endregion
 
-                                    #region Calibrate out starting force bias due to case compression
-                                    if (counter==1)
+                                    #region Calibrate out starting force bias 
+                                    if (counter < 20)
                                     {
-                                        initialForce = force;
+                                        forceCalArray.Add(force);
                                     }
+                                    initialForce = forceCalArray.Min();
                                     forceDiff = force - initialForce;
                                     #endregion
 
@@ -312,44 +322,29 @@ namespace SpasticityClient
                                         chartModel.ForceValues.RemoveAt(0);
                                     }
 
-                                    var nowticks = DateTime.Now;
-                                    chartModel.SetAxisLimits(nowticks);
+                                    //var nowticks = DateTime.Now;
 
                                     chartModel.EMGValues.Add(new MeasureModel { DateTime = nowticks, Value = emg });
                                     chartModel.ForceValues.Add(new MeasureModel { DateTime = nowticks, Value = forceDiff });
                                     chartModel.AngleValues.Add(new MeasureModel { DateTime = nowticks, Value = angle });
                                     chartModel.AngularVelocityValues.Add(new MeasureModel { DateTime = nowticks, Value = angVel });
+                                    
+                                    chartModel.SetAxisLimits(nowticks);
                                     #endregion
 
                                     #region Send data to Excel collection
                                     chartModel.SessionDatas.Add(new SessionData
                                     {
-                                        TimeStamp = (nowticks - nowstart).Ticks / 10000, //time since read start in ms
-
-                                        //AngVelX_A = angVelX_A,
-                                        //AngVelY_A = angVelY_A,
-                                        //AngVelZ_A = angVelZ_A,
-
-                                        //OrientX_A = orientX_A,
-                                        //OrientY_A = orientY_A,
-                                        //OrientZ_A = orientZ_A,
-
-                                        //AngVelX_B = angVelX_B,
-                                        //AngVelY_B = angVelY_B,
-                                        //AngVelZ_B = angVelZ_B,
-
-                                        //OrientX_B = orientX_B,
-                                        //OrientY_B = orientY_B,
-                                        //OrientZ_B = orientZ_B,
-
-                                        Angle = angle,
-                                        AngVel = angVel,
-                                        EMG = emg,
-                                        Force = forceDiff
+                                        TimeStamp = (long)elapsedTime,
+                                        Angle_deg = angle,
+                                        AngVel_degpersec = angVel,
+                                        EMG_mV = emg,
+                                        Force_N = forceDiff
                                     }); ;
                                     #endregion
 
                                     counter++;
+                                    loopIndex++;
                                     Thread.Sleep(30);
                                 }
                             }
