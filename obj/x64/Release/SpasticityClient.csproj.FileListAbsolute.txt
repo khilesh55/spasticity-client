@@ -25,7 +25,6 @@ C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\x64\Release\Pri
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\x64\Release\Syncfusion.Compression.Base.xml
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\x64\Release\Syncfusion.Shared.WPF.xml
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\bin\x64\Release\Syncfusion.XlsIO.Base.xml
-C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\x64\Release\SpasticityClient.csprojAssemblyReference.cache
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\x64\Release\AngleChart.baml
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\x64\Release\AngularVelocityChart.baml
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\x64\Release\EMGChart.baml
@@ -51,3 +50,4 @@ C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\x64\Release\Spa
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\x64\Release\SpasticityClient.csproj.CopyComplete
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\x64\Release\SpasticityClient.exe
 C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\x64\Release\SpasticityClient.pdb
+C:\Users\VR-7\source\repos\SpasticityClient\SpasticityClient\obj\x64\Release\SpasticityClient.csprojAssemblyReference.cache
